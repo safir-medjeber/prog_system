@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <strings.h>
+#include <string.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <unistd.h>
@@ -10,7 +10,7 @@
 
 
 void init_socaddr(struct sockaddr_in* addr){
-  bzero(addr, sizeof(*addr));
+  memset(addr,'0', sizeof(*addr));
   addr->sin_family = AF_INET;
   addr->sin_port = htons(PORT);
   addr->sin_addr.s_addr = inet_addr(ADRESSE);
@@ -39,6 +39,7 @@ int createSocket(){
 
 int main(int argc,char *argv[]) {
   int socket;
+  char buffer[256];
   socket = createSocket();
   
   if (socket==-1) {
@@ -49,6 +50,10 @@ int main(int argc,char *argv[]) {
   char *n = "salut toi";
   printf("j'envoi le mot : %s\n", n);
   write(socket,n,strlen(n));
+  perror("write ");
+  read(socket,buffer,256);
+  printf("%s", buffer);
+  perror("read");
   close(socket);
   exit(EXIT_SUCCESS);
 }
