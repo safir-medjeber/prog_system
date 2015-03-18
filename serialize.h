@@ -11,6 +11,6 @@ int taille_int(int n);
 char *serializeInt(int entier);
 char *serializeString(char* s);
 char *serializeArg(arg v);
-//int testSerialize();
+int testSerialize();
 
 #endif

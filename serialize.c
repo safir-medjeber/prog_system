@@ -20,6 +20,48 @@ int taille_int (int n) {
   return 10;
 }
 
+
+
+
+void printVar(char ** ptr){
+  int tmp;
+  printf(" (%d ",**ptr);
+  (*ptr)++;
+  printf("%d)",**ptr);
+  tmp = **ptr;
+  for(int i=0; i< tmp; i++){
+    (*ptr)++; 
+    printf("'%c'",**ptr);
+  }
+  (*ptr)++;
+}
+
+
+void  printMsg(char * send){
+  int tmp;
+  char** ptr= &send;  
+  printVar(ptr);
+  printVar(ptr);
+  printVar(ptr);
+  printVar(ptr);
+ 
+} 
+
+
+
+char * prepareMsgBeforeSend(char* fonction, char* argc, char* structArg){
+  char *sizeMsg; 
+  int size;
+  char* send;
+  
+  size= strlen(fonction)+ strlen(argc) + strlen(structArg);
+  sizeMsg = serializeInt(size);
+  send = malloc(sizeof(char)*size+2);
+  sprintf(send, "%s%s%s%s", sizeMsg, fonction, argc, structArg);
+  return send;
+}
+
+
 char * serializeInt(int entier){
   int i, lng;
   char buff1[512];
@@ -44,12 +86,12 @@ char * serializeString(char *s){
   int i, lng;
   char *serial;
   char buff[512];
-  
+
   lng=strlen(s);
   serial=malloc(sizeof(char)*(lng+2));
   buff[0]=0x02;
   buff[1]=lng;
-  
+
   for(i=0; i<lng; i++){
     buff[i+2]=s[i];
   }
@@ -100,32 +142,14 @@ char * serializeArg(arg argv){
   return serial;
 }
 
-/*int testSerialize(){
-  int i;
-  
-  char * c = serializeInt(123);
-  printf("int: %d%d %s\n",c[0],c[1],c);
-  
-  char * b = serializeString("argent money oseille maille pognon fric flouze pépète");
-  printf("string: %d%d\n", b[0],b[1]);
-  int var = b[1];
-  for (i=0 ; i<var; i++)
-  printf("%c", b[i+2]);
-  printf("\n");
-  
-  int n = 1234;
-  arg ar;
-  ar.type = 1;
-  ar.arg = &n;
-  
-  char * a = serializeArg(ar);
-  printf("arg : %d%d %c %d%d ", a[0],a[1],a[2],a[3],a[4]);
-  var = a[4];
-  for (i=0 ; i<var; i++)
-  printf("%c", a[i+5]);
-  printf("\n");
-  
+int testSerialize(){
+  char* c = serializeInt(123);
+  char* b = serializeString("ok");
+  char* send= prepareMsgBeforeSend(b, c ,b);
+  printMsg(send);
+   
   return 0;
-  }*/
+}
+
 
 

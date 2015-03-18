@@ -67,6 +67,6 @@ int runClient(){
 int main(int argc,char *argv[]) {
 
   //runClient();
-  // testSerialize();
+  testSerialize();
   
 }
