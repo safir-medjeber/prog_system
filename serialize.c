@@ -3,57 +3,41 @@
 #include <string.h>
 #include <unistd.h>
 #include "serialize.h"
-  
-int taille_int (int n) {
-  if (n < 0) return taille_int(n*-1);
-  if (n < 10) return 1;
-  if (n < 100) return 2;
-  if (n < 1000) return 3;
-  if (n < 10000) return 4;
-  if (n < 100000) return 5;
-  if (n < 1000000) return 6;
-  if (n < 10000000) return 7;
-  if (n < 100000000) return 8;
-  if (n < 1000000000) return 9;
-  /*      2147483647 is 2^31-1 - add more ifs as needed
-	  and adjust this final return as well. */
-  return 10;
-}
 
 
-
-
-void printVar(char ** ptr){
+char* printVar(char* ptr){
   int tmp;
-  printf(" (%d ",**ptr);
-  (*ptr)++;
-  printf("%d)",**ptr);
-  tmp = **ptr;
+  printf(" (%d ",*ptr);
+  ptr++;
+  printf("%d)",*ptr);
+  tmp = *ptr;
   for(int i=0; i< tmp; i++){
-    (*ptr)++; 
-    printf("'%c'",**ptr);
+    ptr++; 
+    printf("'%c'",*ptr);
   }
-  (*ptr)++;
+  ptr++;
+  return ptr;
 }
-
 
 void  printMsg(char * send){
-  int tmp;
-  char** ptr= &send;  
-  printVar(ptr);
-  printVar(ptr);
-  printVar(ptr);
-  printVar(ptr);
- 
+  char* ptr;  
+  ptr = printVar(send);
+  printf("\n");
+  ptr = printVar(ptr);
+  printf("\n");
+  ptr = printVar(ptr);
+  printf("\n");
+  ptr = printVar(ptr);
+  printf("\n");
+  ptr = printVar(ptr);
+  printf("\n");
 } 
-
 
 
 char * prepareMsgBeforeSend(char* fonction, char* argc, char* structArg){
   char *sizeMsg; 
   int size;
   char* send;
-  
   size= strlen(fonction)+ strlen(argc) + strlen(structArg);
   sizeMsg = serializeInt(size);
   send = malloc(sizeof(char)*size+2);
@@ -78,7 +62,8 @@ char * serializeInt(int entier){
   for(i=0; i<lng; i++){
     buff2[i+2]=buff1[i];
   }
-  memcpy(serial, buff2, lng+2);
+  buff2[i+3]='\0';
+  memcpy(serial, buff2, lng+3);
   return serial;
 }
 
@@ -86,7 +71,6 @@ char * serializeString(char *s){
   int i, lng;
   char *serial;
   char buff[512];
-
   lng=strlen(s);
   serial=malloc(sizeof(char)*(lng+2));
   buff[0]=0x02;
@@ -95,58 +79,57 @@ char * serializeString(char *s){
   for(i=0; i<lng; i++){
     buff[i+2]=s[i];
   }
-  memcpy(serial, buff, lng+2);
+  buff[i+3]='\0';
+  memcpy(serial, buff, lng+3);
   return serial;
 }
 
+
+
+
 char * serializeArg(arg argv){
-  int i, lng1, lng2, lng, type;
-  char *serialType, *convertString, *tmp, *serial;
-  int *convertInt;
+  int type, size;
+  char *champ1, *champ2, *structure;
+  int convertInt;
   char buff[512];
   
-  serialType = serializeInt(argv.type);
-  lng1 = strlen(serialType);
-  type=serialType[2]-'0';// le type du pointeur de argv
-  
-  buff[0] = 0x00;
-  
-  if(type==1){// si pointeur sur int
-    convertInt = (int *)argv.arg;
-    lng2 = taille_int(*convertInt);
-    tmp=serializeInt(*convertInt); 
- 
-    for(i=0; i<lng2+1; i++){
-      buff[i+1]=tmp[1+i];
-      }
-  }
+  champ1 = serializeInt(argv.type);
+  type= champ1[2]- '0';
 
-  else {// si pointeur sur char
-    convertString = (char *)argv.arg;
-    lng2 = strlen(convertString);
-    tmp = serializeString(convertString);
- 
-    for(i=0; i<lng2+1; i++){
-      buff[i+1]=tmp[1+i];
+  if(type==1){// si pointeur sur int
+    convertInt = *((int *) argv.arg);
+    champ2 = serializeInt(convertInt);
+  }
+  else{
+    if(type==2){// si pointeur sur int
+      champ2 = serializeString(((char *) argv.arg));
     }
   }
 
-  lng = lng1+lng2+2;
-  serial = malloc(sizeof(char)*(lng));
-  memcpy(serial, serialType, lng1);
+  size = strlen(champ1)+ strlen(champ2);
+  structure = malloc(sizeof(char)*size);
+  sprintf(structure, "%s%s", champ1, champ2);
   
-  for(i=0; i<(lng2+2); i++){
-    serial[i+lng1]=buff[i];
-  }
-  
-  return serial;
+  return structure;
+
 }
 
+
+
 int testSerialize(){
-  char* c = serializeInt(123);
-  char* b = serializeString("ok");
-  char* send= prepareMsgBeforeSend(b, c ,b);
+  arg a;
+  int var =4356;
+  char *var2= "coucou";
+  a.type =1;
+  a.arg=&var;
+
+  char *ptr;
+  char* fonction = serializeString("VoitureGamosGovaCaisse");
+  char* argc= serializeInt(133444233);
+  char* structArg =  serializeArg(a);
+  char* send= prepareMsgBeforeSend(fonction, argc , structArg);
   printMsg(send);
+  printf("\n");
    
   return 0;
 }

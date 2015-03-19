@@ -10,9 +10,6 @@
 #define PORT 61234
 
 
-//int appel_externe(const char *fonction, unsigned short argc, struct arg *argv);
-
-
 void init_socaddr(struct sockaddr_in* addr){
   memset(addr,'0', sizeof(*addr));
   addr->sin_family = AF_INET;
@@ -66,7 +63,7 @@ int runClient(){
 
 int main(int argc,char *argv[]) {
 
-  //runClient();
+  //  runClient();
   testSerialize();
   
 }

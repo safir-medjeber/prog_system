@@ -1,15 +1,15 @@
 CC=gcc
-CFLAGS1 = -Wall -pedantic -std=c99 -D _POSIX_C_SOURCE=200112L -pthread
-CFLAGS2 = -Wall -pedantic -std=c99 -D _POSIX_C_SOURCE=200112L 
+CFLAGS1 = -Wall -pthread
+CFLAGS2 = -Wall 
 
 FORCLIENT= client.o serialize.o
-FORSERVER= serveur.o
+FORSERVER= serveur.o 
 
 
-ALL=  client serveur
+TARGETS=  client serveur
 
 
-all: $(ALL)
+all: $(TARGETS)
 
 
 %.o: %.c
