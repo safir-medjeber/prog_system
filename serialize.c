@@ -67,7 +67,7 @@ char * serializeInt(int entier){
   return serial;
 }
 
-char * serializeString(char *s){
+char * serializeString(const char *s){
   int i, lng;
   char *serial;
   char buff[512];
@@ -116,23 +116,7 @@ char * serializeArg(arg argv){
 
 
 
-int testSerialize(){
-  arg a;
-  int var =4356;
-  char *var2= "coucou";
-  a.type =1;
-  a.arg=&var;
 
-  char *ptr;
-  char* fonction = serializeString("VoitureGamosGovaCaisse");
-  char* argc= serializeInt(133444233);
-  char* structArg =  serializeArg(a);
-  char* send= prepareMsgBeforeSend(fonction, argc , structArg);
-  printMsg(send);
-  printf("\n");
-   
-  return 0;
-}
 
 
 

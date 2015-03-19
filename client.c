@@ -61,9 +61,29 @@ int runClient(){
 }
 
 
+int appel_externe(const char *fonction, unsigned short argc, arg argv){
+  char* a = serializeString(fonction);
+  char* b= serializeInt(argc);
+  char* c =  serializeArg(argv);
+  
+  char* send= prepareMsgBeforeSend(a ,b , c);
+  //envoyer le char* send a travers la socket
+  printMsg(send);
+  printf("\n");
+   
+  return 0;
+  
+}
+
 int main(int argc,char *argv[]) {
 
   //  runClient();
-  testSerialize();
+  arg a;
+  int var =4356;
+  char *var2= "coucou";
+  a.type =1;
+  a.arg=&var;
+  //appeler cette methode dans le client
+  appel_externe("plus", 1, a);
   
 }
