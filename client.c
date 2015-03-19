@@ -81,8 +81,8 @@ int main(int argc,char *argv[]) {
   arg a;
   int var =4356;
   char *var2= "coucou";
-  a.type =1;
-  a.arg=&var;
+  a.type =2;
+  a.arg=var2;
   //appeler cette methode dans le client
   appel_externe("plus", 1, a);
   

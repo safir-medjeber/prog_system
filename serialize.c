@@ -6,12 +6,12 @@
 
 
 char* printVar(char* ptr){
-  int tmp;
+  int tmp, i;
   printf(" (%d ",*ptr);
   ptr++;
   printf("%d)",*ptr);
   tmp = *ptr;
-  for(int i=0; i< tmp; i++){
+  for(i=0; i< tmp; i++){
     ptr++; 
     printf("'%c'",*ptr);
   }
@@ -42,6 +42,8 @@ char * prepareMsgBeforeSend(char* fonction, char* argc, char* structArg){
   sizeMsg = serializeInt(size);
   send = malloc(sizeof(char)*size+2);
   sprintf(send, "%s%s%s%s", sizeMsg, fonction, argc, structArg);
+  
+  
   return send;
 }
 
@@ -54,16 +56,16 @@ char * serializeInt(int entier){
   
   sprintf(buff1, "%d", entier); // Conversion de l'entier
   lng=strlen(buff1);
-  serial=malloc(sizeof(char)*(lng+2));
+  serial=malloc(sizeof(char)*(lng+3));
 
   buff2[0]=0x01;
   buff2[1]=lng;
-  
+ 
   for(i=0; i<lng; i++){
     buff2[i+2]=buff1[i];
   }
   buff2[i+3]='\0';
-  memcpy(serial, buff2, lng+3);
+  memcpy(serial, buff2, lng+2);
   return serial;
 }
 
@@ -72,7 +74,7 @@ char * serializeString(const char *s){
   char *serial;
   char buff[512];
   lng=strlen(s);
-  serial=malloc(sizeof(char)*(lng+2));
+  serial=malloc(sizeof(char)*(lng+3));
   buff[0]=0x02;
   buff[1]=lng;
 
@@ -80,7 +82,7 @@ char * serializeString(const char *s){
     buff[i+2]=s[i];
   }
   buff[i+3]='\0';
-  memcpy(serial, buff, lng+3);
+  memcpy(serial, buff, lng+2);
   return serial;
 }
 
@@ -107,16 +109,9 @@ char * serializeArg(arg argv){
   }
 
   size = strlen(champ1)+ strlen(champ2);
-  structure = malloc(sizeof(char)*size);
+  structure = malloc(sizeof(char)*size+2);
   sprintf(structure, "%s%s", champ1, champ2);
-  
+    
   return structure;
 
 }
-
-
-
-
-
-
-
