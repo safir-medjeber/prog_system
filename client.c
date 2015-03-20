@@ -108,6 +108,6 @@ int main(int argc,char *argv[]) {
   tab[2]=c;
   //appeler cette methode dans le client
   //appel_externe("plus", 1, a);
-  appel_externe2("plus", 1, tab);
+  appel_externe2("plus", 3, tab);
   
 }

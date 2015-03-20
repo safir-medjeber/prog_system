@@ -31,6 +31,14 @@ void  printMsg(char * send){
   printf("\n");
   ptr = printVar(ptr);
   printf("\n");
+  ptr = printVar(ptr);
+  printf("\n");
+  ptr = printVar(ptr);
+  printf("\n");
+  ptr = printVar(ptr);
+  printf("\n");
+  ptr = printVar(ptr);
+  printf("\n");
 } 
 
 
@@ -118,32 +126,20 @@ char * serializeArg(arg argv){
 }
 
 char * serializeTabArg(unsigned short argc, arg* argv){
-  int i, j, k, size, sizeArg;
+  int i, j, size=0;
   char *tmpArg, *tabStruct;
-  char buff[2048];
 
-  buff[0] = 0x03;
-  size = 0;
-  sizeArg = 0;
-  j=2;
-
-  for(i=0; i<=argc+1; i++){
+  for(i=0; i<argc; i++){
     tmpArg = serializeArg(argv[i]);
-    sizeArg = strlen(tmpArg);
-    printf("valeur de sizeArg %d \n", sizeArg);
-    size += sizeArg;
-
-    for(k=0; k<sizeArg; k++)
-      buff[j+k] = tmpArg[k];
-
-    j += sizeArg;
+    size += strlen(tmpArg);
+  }
+  
+  tabStruct = malloc(sizeof(char)*size); 
+	
+  for(i=0; i<argc; i++){
+    tmpArg = serializeArg(argv[i]);
+    strcat(tabStruct,tmpArg);
   }
 
-  buff[1] = size;
-  buff[j+1]= '\0';
-
-  tabStruct = malloc(sizeof(char)*size+3); 
-  memcpy(tabStruct, buff, size+2);
- 
   return tabStruct;
 }
