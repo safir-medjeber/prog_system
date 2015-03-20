@@ -11,6 +11,7 @@ int taille_int(int n);
 char *serializeInt(int entier);
 char *serializeString(const char* s);
 char *serializeArg(arg v);
+char *serializeTabArg(unsigned short argc, arg* v);
 
 char * prepareMsgBeforeSend(char* fonction, char* argc, char* structArg);
   void  printMsg(char * send);

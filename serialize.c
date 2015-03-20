@@ -73,6 +73,7 @@ char * serializeString(const char *s){
   int i, lng;
   char *serial;
   char buff[512];
+
   lng=strlen(s);
   serial=malloc(sizeof(char)*(lng+3));
   buff[0]=0x02;
@@ -103,7 +104,7 @@ char * serializeArg(arg argv){
     champ2 = serializeInt(convertInt);
   }
   else{
-    if(type==2){// si pointeur sur int
+    if(type==2){// si pointeur sur char
       champ2 = serializeString(((char *) argv.arg));
     }
   }
@@ -111,7 +112,38 @@ char * serializeArg(arg argv){
   size = strlen(champ1)+ strlen(champ2);
   structure = malloc(sizeof(char)*size+2);
   sprintf(structure, "%s%s", champ1, champ2);
-    
+  
   return structure;
 
+}
+
+char * serializeTabArg(unsigned short argc, arg* argv){
+  int i, j, k, size, sizeArg;
+  char *tmpArg, *tabStruct;
+  char buff[2048];
+
+  buff[0] = 0x03;
+  size = 0;
+  sizeArg = 0;
+  j=2;
+
+  for(i=0; i<=argc+1; i++){
+    tmpArg = serializeArg(argv[i]);
+    sizeArg = strlen(tmpArg);
+    printf("valeur de sizeArg %d \n", sizeArg);
+    size += sizeArg;
+
+    for(k=0; k<sizeArg; k++)
+      buff[j+k] = tmpArg[k];
+
+    j += sizeArg;
+  }
+
+  buff[1] = size;
+  buff[j+1]= '\0';
+
+  tabStruct = malloc(sizeof(char)*size+3); 
+  memcpy(tabStruct, buff, size+2);
+ 
+  return tabStruct;
 }
