@@ -5,55 +5,21 @@
 #include "serialize.h"
 
 
-char* printVar(char* ptr){
-  int tmp, i;
-  printf(" (%d ",*ptr);
-  ptr++;
-  printf("%d)",*ptr);
-  tmp = *ptr;
-  for(i=0; i< tmp; i++){
-    ptr++; 
-    printf("'%c'",*ptr);
-  }
-  ptr++;
-  return ptr;
-}
 
-void  printMsg(char * send){
-  char* ptr;  
-  ptr = printVar(send);
-  printf("\n");
-  ptr = printVar(ptr);
-  printf("\n");
-  ptr = printVar(ptr);
-  printf("\n");
-  ptr = printVar(ptr);
-  printf("\n");
-  ptr = printVar(ptr);
-  printf("\n");
-  ptr = printVar(ptr);
-  printf("\n");
-  ptr = printVar(ptr);
-  printf("\n");
-  ptr = printVar(ptr);
-  printf("\n");
-  ptr = printVar(ptr);
-  printf("\n");
-} 
-
+// format de serialisation choisi
+// pour appeler plus(1,1)
+// 0x02 4 'p' 'l' 'u' 's'  0x01 1 '2' 0x01 1 '1' 0x01 1 '
 
 char * prepareMsgBeforeSend(char* fonction, char* argc, char* structArg){
   char *sizeMsg; 
   int size;
   char* send;
   size= strlen(fonction)+ strlen(argc) + strlen(structArg);
-  sizeMsg = serializeInt(size);
-  send = malloc(sizeof(char)*size+2);
-  sprintf(send, "%s%s%s%s", sizeMsg, fonction, argc, structArg);
-  
-  
+  send = malloc(sizeof(char)*size);
+  sprintf(send, "%s%s%s",fonction, argc, structArg);
   return send;
 }
+
 
 
 char * serializeInt(int entier){
@@ -96,50 +62,38 @@ char * serializeString(const char *s){
 }
 
 
-
-
 char * serializeArg(arg argv){
-  int type, size;
-  char *champ1, *champ2, *structure;
-  int convertInt;
-  char buff[512];
+  int type, convertInt;
+  char *champ="error";
   
-  champ1 = serializeInt(argv.type);
-  type= champ1[2]- '0';
-
+  type= argv.type;
+  if(type==0){// void
+    champ = "";
+  }
   if(type==1){// si pointeur sur int
     convertInt = *((int *) argv.arg);
-    champ2 = serializeInt(convertInt);
+    champ = serializeInt(convertInt);
   }
-  else{
-    if(type==2){// si pointeur sur char
-      champ2 = serializeString(((char *) argv.arg));
-    }
+  if(type==2){// si pointeur sur char
+    champ = serializeString(((char *) argv.arg));
   }
 
-  size = strlen(champ1)+ strlen(champ2);
-  structure = malloc(sizeof(char)*size+2);
-  sprintf(structure, "%s%s", champ1, champ2);
-  
-  return structure;
-
+  return champ;
 }
 
 char * serializeTabArg(unsigned short argc, arg* argv){
   int i, j, size=0;
   char *tmpArg, *tabStruct;
-
   for(i=0; i<argc; i++){
-    tmpArg = serializeArg(argv[i]);
+    tmpArg = serializeArg(*argv);
     size += strlen(tmpArg);
   }
-  
   tabStruct = malloc(sizeof(char)*size); 
 	
   for(i=0; i<argc; i++){
     tmpArg = serializeArg(argv[i]);
     strcat(tabStruct,tmpArg);
   }
-
+ 
   return tabStruct;
 }

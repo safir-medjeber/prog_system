@@ -4,11 +4,15 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <unistd.h>
+
 #include "serialize.h"
+#include "printMsg.h"
+#include "client.h"
 
 #define ADRESSE "127.0.0.1"
 #define PORT 61234
 
+int mySocket;
 
 void init_socaddr(struct sockaddr_in* addr){
   memset(addr,'0', sizeof(*addr));
@@ -38,76 +42,59 @@ int createSocket(){
 }
 
 
-int runClient(){
-  int socket;
-  char buffer[256];
-  socket = createSocket();
-  
-  if (socket==-1) {
+
+
+int runClient(char *fonction, int argc, arg *argv){
+  mySocket = createSocket();
+  if(mySocket==-1) {
     perror("socket problem\n");
     exit(EXIT_FAILURE);
   }
+
+  appel_externe(fonction , argc, argv);
  
-  char *n = "salut toi";
-  printf("j'envoi le mot : %s\n", n);
-  write(socket,n,strlen(n));
-  perror("write ");
-  read(socket,buffer,256);
-  printf("%s", buffer);
-  perror("read");
-  close(socket);
-  exit(EXIT_SUCCESS);
-
-}
-
-
-int appel_externe(const char *fonction, unsigned short argc, arg argv){
-  char* a = serializeString(fonction);
-  char* b= serializeInt(argc);
-  char* c =  serializeArg(argv);
-  
-  char* send= prepareMsgBeforeSend(a ,b , c);
-  //envoyer le char* send a travers la socket
-  printMsg(send);
-  printf("\n");
-   
   return 0;
-  
 }
 
-int appel_externe2(const char *fonction, unsigned short argc, arg* argv){
+
+
+int appel_externe(const char *fonction, unsigned short argc, arg * argv){
   char* a = serializeString(fonction);
   char* b= serializeInt(argc);
   char* c =  serializeTabArg(argc, argv);
-  
   char* send= prepareMsgBeforeSend(a ,b , c);
-  //envoyer le char* send a travers la socket
-  printMsg(send);
-  printf("\n");
+  sendData(send, argc);
+  
    
   return 0;
   
 }
 
-int main(int argc,char *argv[]) {
+int sendData(char * send, unsigned short argc){
+  char buffer[256];
+  printf("j'envoi:\n");
+  printMsg(send);
+  write(mySocket, send, strlen(send));
+  perror("write ");
+  read(mySocket,buffer,256);
+  printf("%s", buffer);
+  perror("read");
+  close(mySocket);
+  return 0;
+}
 
-  //  runClient();
-  arg tab[3];
-  arg a, b, c;
-  int var =4356;
-  char *var2= "coucou";
-  int var3 = 754;
-  a.type =2;
-  a.arg=var2;
-  b.type = 1;
-  b.arg = &var;
-  c.type=1;
-  c.arg=&var3;
-  tab[0]=a;
-  tab[1]=b;
-  tab[2]=c;
-  //appeler cette methode dans le client
-  //appel_externe("plus", 1, a);
-  appel_externe2("plus", 3, tab);
+
+int main(int argc,char *argv[]) {
   
+  int var= 2;
+  char * var2 = "coucou"; 
+
+  arg a[2];
+  a[0].type=2;
+  a[0].arg=var2;
+  a[1].type=1;
+  a[1].arg=&var;
+
+
+  runClient("plus", 2, a );  
 }

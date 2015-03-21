@@ -7,6 +7,8 @@
 #include <sys/socket.h>
 #include <pthread.h>
 
+#include "printMsg.h"
+
 #define ADRESSE "127.0.0.1"
 #define PORT 61234
 
@@ -14,21 +16,19 @@
 void *connection_handler(void *socket_desc){
   int lus, i;
   int sock = *(int*)socket_desc;
-  char buffer[256];
+  char buffer[1024];
   char *msg = "votre msg a ete recu par le serveur\n";
   
-    while ((lus=read(sock,buffer,256))>0) {
-      for (i=0; i<lus; i++)
-	printf("%c",buffer[i]);
-      printf("\n");
+  while ((lus=read(sock,buffer,256))>0) {
+    printMsg(buffer);
     
     write(sock , msg , strlen(msg));
     perror("write");
     close(sock);
     printf("socket fermee\n");
-    }
+  }
   
-    printf("thread terminee\n");
+  printf("thread terminee\n");
 
   return NULL;
 }

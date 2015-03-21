@@ -14,7 +14,7 @@ char *serializeArg(arg v);
 char *serializeTabArg(unsigned short argc, arg* v);
 
 char * prepareMsgBeforeSend(char* fonction, char* argc, char* structArg);
-  void  printMsg(char * send);
+void  printMsg(char * send);
   char* printVar(char* ptr);
 
 //int appel_externe(const char *fonction, unsigned short argc,  arg argv);
