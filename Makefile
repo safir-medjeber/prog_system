@@ -3,7 +3,7 @@ CFLAGS1 = -Wall -pthread
 CFLAGS2 = -Wall 
 
 FORCLIENT= client.o serialize.o printMsg.o
-FORSERVER= serveur.o  printMsg.o
+FORSERVER= serveur.o  printMsg.o serialize.o
 
 
 TARGETS=  client serveur
@@ -21,7 +21,7 @@ client: $(FORCLIENT)
 	$(CC) -o $@ $^ $(CFLAGS2)
 
 
-server.o : printMsg.h
+server.o : printMsg.h serialize.h
 serveur: $(FORSERVER)
 	$(CC) -o $@ $^ $(CFLAGS1)
 

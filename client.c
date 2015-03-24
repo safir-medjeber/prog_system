@@ -87,14 +87,14 @@ int sendData(char * send, unsigned short argc){
 int main(int argc,char *argv[]) {
   
   int var= 2;
-  char * var2 = "coucou"; 
+  int var2 = 7; 
 
   arg a[2];
-  a[0].type=2;
-  a[0].arg=var2;
+  a[0].type=1;
+  a[0].arg=&var2;
   a[1].type=1;
   a[1].arg=&var;
 
 
-  runClient("plus", 2, a );  
+  runClient("multiplie", 2, a );  
 }
