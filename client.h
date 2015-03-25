@@ -3,7 +3,7 @@
 #define CLIENT_H_INCLUDED
 
 
-void init_socaddr(struct sockaddr_in* addr);
+void init_socaddr(struct sockaddr_un* addr);
 int createSocket();
 int runClient(char *fonction, int argc, arg *argv);
 

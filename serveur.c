@@ -1,12 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/un.h>
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <pthread.h>
-
 #include "printMsg.h"
 #include "serialize.h"
 #define ADRESSE "127.0.0.1"
@@ -267,19 +267,25 @@ void *connection_handler(void *socket_desc){
 
 
 
-void init_socaddr(struct sockaddr_in* addr){
+void init_socaddr(struct sockaddr_un* addr){
   memset(addr,'0', sizeof(*addr));
-  addr->sin_family = AF_INET;
-  addr->sin_port = htons(PORT);
-  addr->sin_addr.s_addr = inet_addr(ADRESSE);
+  addr->sun_family = AF_UNIX;
+  
+  //  								  /_!_\	REMARQUE IMPORTANTE 	/_!_\
+  
+  // Il faudrait peut etre changer le nom de la soquette pour chaque connextion car chaque connexion est unique 
+  // NB : penser a tester plusieurs connexions pour verifier que le nom unique de la socket ne pose paas probleme
+  strncpy(addr->sun_path, getenv("HOME"), sizeof(addr->sun_path)-1);
+  strncat(addr->sun_path, "/", sizeof(addr->sun_path)-1);
+  strncat(addr->sun_path, ".soquette", sizeof(addr->sun_path)-1);
 }
 
 int createServerSocket(){
-  struct sockaddr_in addr;
+  struct sockaddr_un addr;
   int sock;
   init_socaddr(&addr);
 
-  sock = socket(PF_INET, SOCK_STREAM, 0);
+  sock = socket(AF_UNIX, SOCK_STREAM, 0);
   if(sock == -1){
     perror("Serveur socket");
     return -1;
@@ -299,8 +305,8 @@ int createServerSocket(){
 
 
 int main(int argc,char *argv[]) {
-  struct sockaddr_in addr;
-  struct sockaddr_in c;
+  struct sockaddr_un addr;
+  struct sockaddr_un c;
   int sock,client_sock;
   unsigned int l;
   pthread_t th;
@@ -313,7 +319,7 @@ int main(int argc,char *argv[]) {
     exit(EXIT_FAILURE);
   }
  
-  while ((client_sock=accept(sock,(struct sockaddr *)&c,&l))) {
+  while ((client_sock=accept(sock,NULL,NULL))) {
     printf("connection du client acceptee\n");
     if( pthread_create( &th, NULL, connection_handler, (void*) &client_sock) < 0){
       perror("could not create thread ");

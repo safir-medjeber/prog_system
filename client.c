@@ -2,32 +2,31 @@
 #include <stdlib.h>
 #include <string.h>
 #include <arpa/inet.h>
-#include <sys/socket.h>
 #include <unistd.h>
-
+#include <sys/un.h>
+#include <sys/socket.h>	
 #include "serialize.h"
 #include "printMsg.h"
 #include "client.h"
-
 #define ADRESSE "127.0.0.1"
 #define PORT 61234
 
 int mySocket;
 
-void init_socaddr(struct sockaddr_in* addr){
-  memset(addr,'0', sizeof(*addr));
-  addr->sin_family = AF_INET;
-  addr->sin_port = htons(PORT);
-  addr->sin_addr.s_addr = inet_addr(ADRESSE);
+void init_socaddr(struct sockaddr_un* addr){
+  memset(addr,0, sizeof(*addr));
+  addr->sun_family = AF_UNIX;
+  strncpy(addr->sun_path, getenv("HOME"), sizeof(addr->sun_path)-1);
+  strncat(addr->sun_path, "/", sizeof(addr->sun_path)-1);
+  strncat(addr->sun_path, ".soquette", sizeof(addr->sun_path)-1);
 }
 
 
 int createSocket(){
-  struct sockaddr_in addr;
+  struct sockaddr_un addr;
   int sock;
+  sock = socket(AF_UNIX, SOCK_STREAM, 0);
   init_socaddr(&addr);
-  sock = socket(PF_INET, SOCK_STREAM, 0);
-
   if(sock == -1){
     perror("Erreur create client");
     return -1;
