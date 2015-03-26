@@ -16,9 +16,11 @@ int mySocket;
 void init_socaddr(struct sockaddr_un* addr){
   memset(addr,0, sizeof(*addr));
   addr->sun_family = AF_UNIX;
-  strncpy(addr->sun_path, getenv("HOME"), sizeof(addr->sun_path)-1);
-  strncat(addr->sun_path, "/", sizeof(addr->sun_path)-1);
-  strncat(addr->sun_path, ".soquette", sizeof(addr->sun_path)-1);
+  strncpy(addr->sun_path, "/tmp/.soquette", sizeof(addr->sun_path)-1);
+
+  //strncpy(addr->sun_path, getenv("HOME"), sizeof(addr->sun_path)-1);
+  // strncat(addr->sun_path, "/", sizeof(addr->sun_path)-1);
+  //strncat(addr->sun_path, ".soquette", sizeof(addr->sun_path)-1);
 }
 
 
