@@ -67,7 +67,7 @@ arg* getArg(char* buffer,int nbArg,int c,int sock){
 	int i,j,taille;
 	char* nbArgTmp;
 	arg* tabArg=malloc(nbArg*sizeof(arg));
-	for(int i=0;i <nbArg;i++){
+	for(i=0;i <nbArg;i++){
 		if(buffer[++c]==1){//l'argument est un entier
 			tabArg[i].type=1;
 			taille=buffer[++c];

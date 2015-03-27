@@ -91,10 +91,51 @@ int sendData(char * send, unsigned short argc){
   return 0;
 }
 
+int parsing(int argc, char *argv[]){
+  int i=0 , j=0, k=0, nbrArg[512];
+  char *func, *nameFunc, *tmpArg, stringArg[512];
+  
+  if(argc==1)        // Si aucun nom de fonction
+    printf("Pas de fonction à appeler\n");
+  else {             // Si on donne un nom de fonction
+    nameFunc = argv[1]; //On prend le nom de la fonction
+    if(argc==2){        //Si la fonction ne prend pas d'arguments   
+      arg a[1];
+      a[0].type = 0;
+      a[0].arg = NULL;
+      runClient(nameFunc, 1, a);
+    }
+    else { //Si la fonction a des arguments
+      arg a[argc-2];
+      for(i=2;i<argc;i++){
+	tmpArg = argv[i];
+	if(tmpArg[0]>='0' || tmpArg[0]<='9'){ // Si l'argument est un nombre
+	  nbrArg[k] = atoi(tmpArg);
+	  a[j].type = 1;
+	  a[j].arg = &nbrArg[k];
+	  k++;
+	  j++;
+	}
+	else 
+	  if ((tmpArg[0]>='A' && tmpArg[0]<='Z') || 
+	      (tmpArg[0]>='a' && tmpArg[0]<='z')){ // Si l'argument est un string
+	    //Pas encore testé car on a pas encore de fonctions sur les strings
+	    a[j].type = 2;
+	    a[j].arg = &tmpArg;
+	    j++;
+	  }
+      }
+      runClient(nameFunc, argc-2, a);   
+    }
+  }	
+  return 0;
+}
 
 int main(int argc,char *argv[]) {
   
-  int var= 1350;
+  parsing(argc, argv);
+
+  /*  int var= 1350;
   int var2 = 350; 
   int var3= 300;
   arg a[3];
@@ -106,5 +147,5 @@ int main(int argc,char *argv[]) {
   a[2].arg=&var3;
 
 
-  runClient("plus", 3, a );  
+  runClient("plus", 3, a );  */
 }
