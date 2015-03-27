@@ -78,7 +78,14 @@ int sendData(char * send, unsigned short argc){
   write(mySocket, send, strlen(send));
   perror("write ");
   read(mySocket,buffer,256);
-  printf("%s", buffer);
+  if(buffer[0]!= APPEL_OK)
+	  return 0;
+  else{
+	  int i;
+	  for(i=0; i < buffer[2];i++){
+		  printf("j'ai recu en byte %d la valeur : %d\n",i+1,buffer[3+i]);
+	  }
+  }
   perror("read");
   close(mySocket);
   return 0;
@@ -87,15 +94,17 @@ int sendData(char * send, unsigned short argc){
 
 int main(int argc,char *argv[]) {
   
-  int var= 2;
-  int var2 = 7; 
-
-  arg a[2];
+  int var= 1350;
+  int var2 = 350; 
+  int var3= 300;
+  arg a[3];
   a[0].type=1;
   a[0].arg=&var2;
   a[1].type=1;
   a[1].arg=&var;
+  a[2].type=1;
+  a[2].arg=&var3;
 
 
-  runClient("multiplie", 2, a );  
+  runClient("plus", 3, a );  
 }
