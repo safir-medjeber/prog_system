@@ -5,6 +5,7 @@
 #define MAUVAIS_ARGUMENTS '2'
 #define APPEL_OK '3'
 #define FONCTION_INCONNUE '4'
+#define TIMEOUT '5'
 
 
 typedef struct {

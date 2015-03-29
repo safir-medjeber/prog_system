@@ -11,7 +11,6 @@
 // 0x02 4 'p' 'l' 'u' 's'  0x01 1 '2' 0x01 1 '1' 0x01 1 '
 
 char * prepareMsgBeforeSend(char* fonction, char* argc, char* structArg){
-  char *sizeMsg; 
   int size;
   char* send;
   size= strlen(fonction)+ strlen(argc) + strlen(structArg);
@@ -82,7 +81,7 @@ char * serializeArg(arg argv){
 }
 
 char * serializeTabArg(unsigned short argc, arg* argv){
-  int i, j, size=0;
+  int i, size=0;
   char *tmpArg, *tabStruct;
   for(i=0; i<argc; i++){
     tmpArg = serializeArg(*argv);

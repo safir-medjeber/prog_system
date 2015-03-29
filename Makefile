@@ -1,6 +1,5 @@
 CC=gcc
-CFLAGS1 = -Wall -pthread
-CFLAGS2 = -Wall 
+CFLAGS = -Wall -Wextra
 
 FORCLIENT= client.o serialize.o printMsg.o
 FORSERVER= serveur.o  printMsg.o serialize.o serverFunctions.o deserialize.o
@@ -13,17 +12,17 @@ all: $(TARGETS)
 
 
 %.o: %.c
-	$(CC) -c -o $@ $<
+	$(CC) -c -o $@ $< $(CFLAGS)
 
 client.o : serialize.h client.h printMsg.h 
 
 client: $(FORCLIENT)
-	$(CC) -o $@ $^ $(CFLAGS2)
+	$(CC) -o $@ $^ $(CFLAGS)
 
 
 server.o : printMsg.h serialize.h serverFunctions.h deserialize.h
 serveur: $(FORSERVER)
-	$(CC) -o $@ $^ $(CFLAGS1)
+	$(CC) -o $@ $^ $(CFLAGS)
 
 
 

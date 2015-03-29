@@ -8,8 +8,6 @@
 #include "serialize.h"
 #include "printMsg.h"
 #include "client.h"
-#define ADRESSE "127.0.0.1"
-#define PORT 61234
 
 int mySocket;
 
@@ -17,10 +15,6 @@ void init_socaddr(struct sockaddr_un* addr){
   memset(addr,0, sizeof(*addr));
   addr->sun_family = AF_UNIX;
   strncpy(addr->sun_path, "/tmp/.soquette", sizeof(addr->sun_path)-1);
-
-  //strncpy(addr->sun_path, getenv("HOME"), sizeof(addr->sun_path)-1);
-  // strncat(addr->sun_path, "/", sizeof(addr->sun_path)-1);
-  //strncat(addr->sun_path, ".soquette", sizeof(addr->sun_path)-1);
 }
 
 
@@ -43,8 +37,6 @@ int createSocket(){
 }
 
 
-
-
 int runClient(char *fonction, int argc, arg *argv){
   mySocket = createSocket();
   if(mySocket==-1) {
@@ -64,39 +56,63 @@ int appel_externe(const char *fonction, unsigned short argc, arg * argv){
   char* b= serializeInt(argc);
   char* c =  serializeTabArg(argc, argv);
   char* send= prepareMsgBeforeSend(a ,b , c);
-  sendData(send, argc);
-  
-   
+  if(sendData(send)==-1){
+    close(mySocket);
+    return -1;
+  }
+  if(receiveData()==-1){
+    close(mySocket);
+    return -2;
+  }
+  close(mySocket);
+
   return 0;
   
 }
 
-int sendData(char * send, unsigned short argc){
-  char buffer[256];
+int sendData(char * send){
   printf("j'envoi:\n");
   printMsg(send);
-  write(mySocket, send, strlen(send));
-  perror("write ");
-  read(mySocket,buffer,256);
-  if(buffer[0]!= APPEL_OK)
-	  return 0;
-  else{
-	  int i;
-	  for(i=0; i < buffer[2];i++){
-		  printf("j'ai recu en byte %d la valeur : %d\n",i+1,buffer[3+i]);
-	  }
+  if((write(mySocket, send,(int)strlen(send)))<0){
+    perror("write data ");
+      return -1;
   }
-  perror("read");
-  close(mySocket);
   return 0;
 }
+
+
+int receiveData(){
+  char buffer[256];
+  if((read(mySocket,buffer,256))<0){
+    perror("read data ");
+    return -1;
+  }
+
+  if(buffer[0]==TIMEOUT){
+    printf("timeOUT\n");
+    return 5;
+  }
+    
+  if(buffer[0]!= APPEL_OK)
+    return -1;
+  
+  else{
+      printf("Signal envoyé par la fonction : %c\n",buffer[0]);
+      printf("Valeur de retour : ");
+      printVar(buffer+1);
+      printf("\n");
+  }
+
+  return 0;
+}
+
 
 int parsing(int argc, char *argv[]){
   int i=0 , j=0, k=0, nbrArg[512];
-  char *func, *nameFunc, *tmpArg, stringArg[512];
+  char *nameFunc, *tmpArg;
   
   if(argc==1)        // Si aucun nom de fonction
-    printf("Pas de fonction à appeler\n");
+    printf("Pas de fonction a appeler\n");
   else {             // Si on donne un nom de fonction
     nameFunc = argv[1]; //On prend le nom de la fonction
     if(argc==2){        //Si la fonction ne prend pas d'arguments   
@@ -145,7 +161,5 @@ int main(int argc,char *argv[]) {
   a[1].arg=&var;
   a[2].type=1;
   a[2].arg=&var3;
-
-
   runClient("plus", 3, a );  */
 }

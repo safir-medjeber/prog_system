@@ -5,8 +5,10 @@
 
 void init_socaddr(struct sockaddr_un* addr);
 int createSocket();
+
 int runClient(char *fonction, int argc, arg *argv);
 
 int appel_externe(const char *fonction, unsigned short argc,  arg* argv);
-int sendData(char *send,  unsigned short argc );
+int sendData(char *send);
+int receiveData();
 #endif

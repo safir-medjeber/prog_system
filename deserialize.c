@@ -22,6 +22,11 @@ int veriFonction(char* fonction){
 	if(strcmp(fonction,"concat")==0){
 		return 5;
 	}
+
+	if(strcmp(fonction,"boucle")==0){
+		return 6;
+	}
+	
 	else{
 		return -1;
 	}
