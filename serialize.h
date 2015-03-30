@@ -1,12 +1,13 @@
 #ifndef SERIALIZE_H_INCLUDED
-
 #define SERIALIZE_H_INCLUDED
-#define PAS_DE_REPONSE '1'
-#define MAUVAIS_ARGUMENTS '2'
-#define APPEL_OK '3'
-#define FONCTION_INCONNUE '4'
-#define TIMEOUT '5'
 
+
+#define APPEL_OK '0'
+#define FONCTION_INCONNUE '1'
+#define MAUVAIS_ARGUMENTS '2'
+#define PAS_DE_REPONSE '3'
+#define ERREUR_TRANSMIT '4'
+#define ERREUR_INCONNUE '5'
 
 typedef struct {
   int type;

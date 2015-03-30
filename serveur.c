@@ -18,8 +18,8 @@
 int mySocket;
 
 void timeOut () {
-  printf("temps ecoulé 2 sec \n");
-  char* res ="5";
+  printf("temps ecoule 2 sec \n");
+  char* res ="3";
   write(mySocket,res,strlen(res));
   close(mySocket);
   exit(0);
@@ -43,7 +43,7 @@ int connection_handler(int sock){
     if (signal( SIGALRM , timeOut) == SIG_ERR )
       perror( " cant catch SIGALRM " ) ;
      alarm(2);
-     printf("alarme lancéé\n");
+     printf("alarme lancee\n");
    
     
   

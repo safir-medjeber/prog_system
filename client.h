@@ -7,6 +7,7 @@ void init_socaddr(struct sockaddr_un* addr);
 int createSocket();
 
 int runClient(char *fonction, int argc, arg *argv);
+int testReturnValue(char * buffer);
 
 int appel_externe(const char *fonction, unsigned short argc,  arg* argv);
 int sendData(char *send);

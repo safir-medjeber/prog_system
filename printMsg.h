@@ -5,5 +5,7 @@
 int extractInt(char * s);
 char* printVar(char* ptr);
 void  printMsg(char * send);
+void  printReceiveMsg(char * send);
+
 
 #endif

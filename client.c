@@ -9,6 +9,8 @@
 #include "printMsg.h"
 #include "client.h"
 
+
+
 int mySocket;
 
 void init_socaddr(struct sockaddr_un* addr){
@@ -56,18 +58,15 @@ int appel_externe(const char *fonction, unsigned short argc, arg * argv){
   char* b= serializeInt(argc);
   char* c =  serializeTabArg(argc, argv);
   char* send= prepareMsgBeforeSend(a ,b , c);
+  int val;
   if(sendData(send)==-1){
     close(mySocket);
     return -1;
   }
-  if(receiveData()==-1){
-    close(mySocket);
-    return -2;
-  }
-  close(mySocket);
-
-  return 0;
   
+  val=receiveData();
+  close(mySocket);
+  return val;
 }
 
 int sendData(char * send){
@@ -81,29 +80,41 @@ int sendData(char * send){
 }
 
 
+
+int testReturnValue(char * buffer){
+  switch(buffer[0]){
+  case APPEL_OK:
+    printf("Signal envoyé par la fonction : APPEL OK\n");
+    return 0;
+  case FONCTION_INCONNUE:
+    printf("Signal envoyé par la fonction : FONCTION_INCONNUE\n");
+    return 1;
+  case MAUVAIS_ARGUMENTS:
+    printf("Signal envoyé par la fonction : MAUVAISE_ARGUMENTS\n");
+    return 2;
+  case PAS_DE_REPONSE:
+    printf("Signal envoyé par la fonction : PAS DE REPONSE\n");  
+    return 3;
+  default:
+    printf("buffer %c \n",buffer[0]);
+      printf("Signal envoyé par la fonction : ERREUR INCONNUE\n");
+    return -1;
+  }
+}
+
 int receiveData(){
   char buffer[256];
+  int val;
   if((read(mySocket,buffer,256))<0){
     perror("read data ");
     return -1;
   }
+  val=testReturnValue(buffer);
 
-  if(buffer[0]==TIMEOUT){
-    printf("timeOUT\n");
-    return 5;
-  }
-    
-  if(buffer[0]!= APPEL_OK)
-    return -1;
+  if(val==0)
+    printReceiveMsg(buffer+1);
   
-  else{
-      printf("Signal envoyé par la fonction : %c\n",buffer[0]);
-      printf("Valeur de retour : ");
-      printVar(buffer+1);
-      printf("\n");
-  }
-
-  return 0;
+  return val;
 }
 
 
@@ -150,9 +161,9 @@ int parsing(int argc, char *argv[]){
 int main(int argc,char *argv[]) {
   
   parsing(argc, argv);
-
-  /*  int var= 1350;
-  int var2 = 350; 
+  /*
+  int var= 245;
+  int var2 = 2; 
   int var3= 300;
   arg a[3];
   a[0].type=1;
@@ -161,5 +172,5 @@ int main(int argc,char *argv[]) {
   a[1].arg=&var;
   a[2].type=1;
   a[2].arg=&var3;
-  runClient("plus", 3, a );  */
+  runClient("merde", 2, a );  */
 }

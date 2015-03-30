@@ -11,7 +11,7 @@ void boucle(){
 }
 
 char* plus(arg* arg,int nb){
-  while(1){}
+  //while(1){}
   //TODO verifier que le nombre d'argument et leurs type sont bons
 	int i;
 	int res = 0;

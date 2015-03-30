@@ -6,10 +6,6 @@
 
 
 
-// format de serialisation choisi
-// pour appeler plus(1,1)
-// 0x02 4 'p' 'l' 'u' 's'  0x01 1 '2' 0x01 1 '1' 0x01 1 '
-
 char * prepareMsgBeforeSend(char* fonction, char* argc, char* structArg){
   int size;
   char* send;

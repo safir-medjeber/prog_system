@@ -42,9 +42,20 @@ void  printMsg(char * send){
   for(i=0; i< argc ; i++){
     ptr = printVar(ptr);
       printf("\n");
-  }
-  
+  } 
 }
 
+
+void  printReceiveMsg(char * ptr){
+  int tmp, i;
+  ptr++;
+  tmp = *ptr;
+  printf("Resultat : ");
+  for(i=0; i< tmp; i++){
+    ptr++; 
+    printf("%c",*ptr);
+  }
+  printf("\n");
+}
 
 
