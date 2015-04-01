@@ -1,7 +1,7 @@
 #ifndef DESERIALIZE_H_INCLUDED
 #define DESERIALIZE_H_INCLUDED
 
-int veriFonction(char* fonction);
+int veriFonction(char* fonction,int nbArg,int sock);
 
 int* setArg(int a);
 

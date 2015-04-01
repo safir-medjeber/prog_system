@@ -90,7 +90,7 @@ int testReturnValue(char * buffer){
     printf("Signal envoyé par la fonction : FONCTION_INCONNUE\n");
     return 1;
   case MAUVAIS_ARGUMENTS:
-    printf("Signal envoyé par la fonction : MAUVAISE_ARGUMENTS\n");
+    printf("Signal envoyé par la fonction : MAUVAIS_ARGUMENTS\n");
     return 2;
   case PAS_DE_REPONSE:
     printf("Signal envoyé par la fonction : PAS DE REPONSE\n");  
@@ -117,7 +117,7 @@ int receiveData(){
   return val;
 }
 
-
+// /!\ PENSER A REVOIR CETTE FONCTION POUR LE CAS DES STRING EN ARGUMENT
 int parsing(int argc, char *argv[]){
   int i=0 , j=0, k=0, nbrArg[512];
   char *nameFunc, *tmpArg;
@@ -130,7 +130,7 @@ int parsing(int argc, char *argv[]){
       arg a[1];
       a[0].type = 0;
       a[0].arg = NULL;
-      runClient(nameFunc, 1, a);
+      runClient(nameFunc, 0, a);
     }
     else { //Si la fonction a des arguments
       arg a[argc-2];
@@ -160,17 +160,17 @@ int parsing(int argc, char *argv[]){
 
 int main(int argc,char *argv[]) {
   
-  parsing(argc, argv);
-  /*
-  int var= 245;
+	parsing(argc, argv);
+  
+	/* int var= 245;
   int var2 = 2; 
-  int var3= 300;
+  char* var3= "coucou";
   arg a[3];
   a[0].type=1;
   a[0].arg=&var2;
   a[1].type=1;
   a[1].arg=&var;
-  a[2].type=1;
-  a[2].arg=&var3;
-  runClient("merde", 2, a );  */
+  a[2].type=2;
+  a[2].arg=var3;
+  runClient("plus", 3, a );  */
 }

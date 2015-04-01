@@ -6,28 +6,60 @@
 #include "deserialize.h"
 #include "serverFunctions.h"
 
-int veriFonction(char* fonction){
+int veriFonction(char* fonction,int nbArg,int sock){
 	if(strcmp(fonction,"plus")==0){
+		if(nbArg > 1 && nbArg < 5)
 		return 1;
+		else{
+		  	erreur(MAUVAIS_ARGUMENTS,sock);
+			return -1;
+		}
 	}
 	else if(strcmp(fonction,"moins")==0){
+		if(nbArg > 1 && nbArg < 5)
 		return 2;
+		else{
+		  	erreur(MAUVAIS_ARGUMENTS,sock);
+			return -1;
+		}
 	}
 	else if(strcmp(fonction,"multiplie")==0){
+		if(nbArg > 1 && nbArg < 5)
 		return 3;
+		else{
+		  	erreur(MAUVAIS_ARGUMENTS,sock);
+			return -1;
+		}
 	}
 	if(strcmp(fonction,"divise")==0){
+		if(nbArg > 1 && nbArg < 5)
 		return 4;
+		else{
+		  	erreur(MAUVAIS_ARGUMENTS,sock);
+			return -1;
+		}
 	}
 	if(strcmp(fonction,"concat")==0){
+		if(nbArg > 1 && nbArg < 5)
 		return 5;
+		else{
+		  	erreur(MAUVAIS_ARGUMENTS,sock);
+			return -1;
+		}
 	}
 
 	if(strcmp(fonction,"boucle")==0){
+		if(nbArg == 0)
+		return 6;
+		else{
+		  	erreur(MAUVAIS_ARGUMENTS,sock);
+			return -1;
+		}
 		return 6;
 	}
 	
 	else{
+	  	erreur(FONCTION_INCONNUE,sock);
 		return -1;
 	}
 }
@@ -61,6 +93,9 @@ char* apply_function(int fonc,arg* argu,int nbArg){
 			break;
 		case 5:
 			return concat(argu,nbArg);
+			break;
+		case 6:
+			return boucle();
 			break;
 		default:
 			return NULL;	
@@ -100,26 +135,32 @@ arg* getArg(char* buffer,int nbArg,int c,int sock){
 		else{
 			perror("type d'argument innatendu");
 			printf("\n%d\n",buffer[c]);
-			write(sock,(void*)(MAUVAIS_ARGUMENTS),1);
+			char a= MAUVAIS_ARGUMENTS;
+			write(sock,&a,1);
 			close(sock);
 			return NULL;
 		}		
 	}
+	printf("fini le traitement ici\n");
 	return tabArg;
 }
 
 
 void erreur(char err,int sock){
 	switch(err){
+		char a;
 		case FONCTION_INCONNUE:
-		perror("mauvaise fonction");
-		write(sock,(void*)FONCTION_INCONNUE,1);
+		printf("avant d'envoyer la sauce\n");
+		a =FONCTION_INCONNUE;
+		write(sock,&a,1);
+		printf("sauce envoyee\n");
 		close(sock);
 		break;
 		
 		case MAUVAIS_ARGUMENTS:
 		perror("mauvaise arguments");
-		write(sock,(void*)MAUVAIS_ARGUMENTS,1);
+		a=MAUVAIS_ARGUMENTS;
+		write(sock,&a,1);
 		close(sock);
 		break;
 		

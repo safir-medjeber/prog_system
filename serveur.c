@@ -47,15 +47,14 @@ int connection_handler(int sock){
     printf("je lis: \n");
     printMsg(buffer);
       nomFonction=deserialize(buffer,&c,2);
-      fonction=veriFonction(nomFonction);
       printf("la fonction est:%s \n",nomFonction);
-      if( fonction< 0){
-		  erreur(FONCTION_INCONNUE,sock);
-		  return -1;
-      }
       // on deserialise le nombre d'argument
       nbArg=getNbArg(buffer,&c);
       printf("jai %d arguments\n",nbArg);
+      fonction=veriFonction(nomFonction,nbArg,sock);
+      if( fonction < 0){
+		  return -1;
+      }
       //TODO ici mettre la condition sur le nombre d'arguements que l'on veut
       arg* tabArg=getArg(buffer,nbArg,c,sock);// tableau ou l'on va stoquer tous les arguments sous forme de struct arg
       if(tabArg==NULL){
