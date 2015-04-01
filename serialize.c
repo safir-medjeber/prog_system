@@ -26,14 +26,13 @@ char * serializeInt(int entier){
   sprintf(buff1, "%d", entier); // Conversion de l'entier
   lng=strlen(buff1);
   serial=malloc(sizeof(char)*(lng+3));
-
+  memset(serial,0,lng+3);
   buff2[0]=0x01;
   buff2[1]=lng;
  
   for(i=0; i<lng; i++){
     buff2[i+2]=buff1[i];
   }
-  buff2[i+3]='\0';
   memcpy(serial, buff2, lng+2);
   return serial;
 }
@@ -45,13 +44,13 @@ char * serializeString(const char *s){
 
   lng=strlen(s);
   serial=malloc(sizeof(char)*(lng+3));
+  memset(serial,0,lng+3);
   buff[0]=0x02;
   buff[1]=lng;
 
   for(i=0; i<lng; i++){
     buff[i+2]=s[i];
   }
-  buff[i+3]='\0';
   memcpy(serial, buff, lng+2);
   return serial;
 }
