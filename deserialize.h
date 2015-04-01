@@ -9,11 +9,12 @@ char* setArg2(char* a);
 
 char* apply_function(int fonc,arg* argu,int nbArg);
 
-char* getNomFonction(char* buffer,int taille,int c);
+char* deserialize(char* buffer,int* c,int type);// type = 1 pour entier, 2 pour string
 
 void erreur(char err,int sock);
 
 arg* getArg(char* buffer,int nbArg,int c,int sock);
 
+int getNbArg(char*buffer,int * c);
 
 #endif

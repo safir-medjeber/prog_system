@@ -127,14 +127,34 @@ void erreur(char err,int sock){
 		break;
 	}
 }
-
-char* getNomFonction(char* buffer,int taille,int c){
+int getNbArg(char*buffer,int* c){
+	(*c)++;
+	if(buffer[*c]!=1){
+		printf("lerreur est %d %d %d",buffer[*c],buffer[*c+1],buffer[*c+2]);
+		return -1;
+	}
+	else{
+		int res;
+		char * tmp;
+		tmp= deserialize(buffer,c,1);
+		res= atoi(tmp);
+		free(tmp);
+		return res;
+	}
+}
+char* deserialize(char* buffer,int* c,int type){
 	char* nomFonction;
-	int i;
+	int i,taille;
+    if(type==2  && buffer[*c] !=2  ){// si on a pas transmis les infos sur la fonction a utiliser
+		return NULL;
+    }
+	*c= *c+ 1;
+	taille=buffer[*c];
+	printf("la taille est %d \n",taille);
 	nomFonction=malloc(taille+1*sizeof(char));//taille+1 car le dernier caractere pour stoquer le caractere '\0'
 	for(i=0;i<taille;i++){// on mets les caracteres de la fonction a utiliser dans nomFonction
-		c++;
-		nomFonction[i]=buffer[c];
+		*c=*c+1;
+		nomFonction[i]=buffer[*c];
 	}
 	nomFonction[i]='\0';
 	return nomFonction;
