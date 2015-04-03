@@ -1,7 +1,7 @@
 #ifndef SERVERFUNCTION_H_INCLUDED
 #define SERVERFUNCTION_H_INCLUDED
 
-void boucle();
+char* boucle();
 char* plus(arg* arg,int nb);
 char* moins(arg* arg,int nb);
 char* multiplie(arg* arg,int nb);

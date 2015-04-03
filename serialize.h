@@ -1,7 +1,6 @@
 #ifndef SERIALIZE_H_INCLUDED
 #define SERIALIZE_H_INCLUDED
 
-
 #define APPEL_OK '0'
 #define FONCTION_INCONNUE '1'
 #define MAUVAIS_ARGUMENTS '2'

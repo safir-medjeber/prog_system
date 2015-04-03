@@ -5,26 +5,28 @@
 
 
 
-void boucle(){
+char* boucle(){
   while(1){
   }
+  return NULL;
 }
 
 char* plus(arg* arg,int nb){
-  //while(1){}
-  //TODO verifier que le nombre d'argument et leurs type sont bons
 	int i;
+	char* a;
 	int res = 0;
 	for(i=0; i < nb;i++){
 		if(arg[i].type!=1){
-			//TODO renvoyer mauvais argument
+			a = malloc(sizeof(char));
+			*a = MAUVAIS_ARGUMENTS;
+			return a;
 		}
 		else{
 			res+=*((int*)(arg[i].arg));
 		}
 	}
 	char*b = serializeInt(res);
-	char* a = malloc((strlen(b)+1)*sizeof(char));// 
+	a = malloc((strlen(b)+1)*sizeof(char));// 
 	a[0]=APPEL_OK;
 	memcpy(a+1,b,strlen(b));
 	printf("je vais afficher ce que vaut a\n");
@@ -34,20 +36,21 @@ char* plus(arg* arg,int nb){
 	return a;
 }
 char* moins(arg* arg,int nb){
-	//TODO verifier que le nombre d'argument et leurs type est bon
 	int i;
 	int res = 0;
+	char* a;
 	for(i=0; i < nb;i++){
 		if(arg[i].type!=1){
-			//TODO renvoyer mauvais argument
-			return NULL;
+			a = malloc(sizeof(char));
+			*a = MAUVAIS_ARGUMENTS;
+			return a;
 		}
 		else{
 			res-=*((int*)(arg[i].arg));
 		}
 	}
 	char*b = serializeInt(res);
-	char* a = malloc((strlen(b)+1)*sizeof(char));// 
+	a = malloc((strlen(b)+1)*sizeof(char));// 
 	a[0]=APPEL_OK;
 	memcpy(a+1,b,strlen(b));
 	printf("je vais afficher ce que vaut a\n");
@@ -57,20 +60,21 @@ char* moins(arg* arg,int nb){
 	return a;
 }
 char* multiplie(arg* arg,int nb){
-	//TODO verifier que le nombre d'argument et leurs type est bon
 	int i;
 	int res = 1;
+	char* a;
 	for(i=0; i < nb;i++){
 		if(arg[i].type!=1){
-			//TODO renvoyer mauvais argument
-			return NULL;
+			a = malloc(sizeof(char));
+			*a = MAUVAIS_ARGUMENTS;
+			return a;
 		}
 		else{
 			res=res* *((int*)(arg[i].arg));
 		}
 	}
 	char*b = serializeInt(res);
-	char* a = malloc((strlen(b)+1)*sizeof(char));// 
+	a = malloc((strlen(b)+1)*sizeof(char));// 
 	a[0]=APPEL_OK;
 	memcpy(a+1,b,strlen(b));
 	printf("je vais afficher ce que vaut a\n");
@@ -80,20 +84,22 @@ char* multiplie(arg* arg,int nb){
 	return a;
 }
 char* divise(arg* arg,int nb){
-	//TODO verifier que le nombre d'argument et leurs type est bon
+	//TODO verifier que le nombre d'ARGUMENTS et leurs type est bon
 	int i;
 	int res = 1;
+	char* a;
 	for(i=0; i < nb;i++){
 		if(arg[i].type!=1){
-			//TODO renvoyer mauvais argument
-			return NULL;
+			a = malloc(sizeof(char));
+			*a = MAUVAIS_ARGUMENTS;
+			return a;
 		}
 		else{
 			res/=*((int*)(arg[i].arg));
 		}
 	}
 	char*b = serializeInt(res);
-	char* a = malloc((strlen(b)+1)*sizeof(char));// 
+	a = malloc((strlen(b)+1)*sizeof(char));// 
 	a[0]=APPEL_OK;
 	memcpy(a+1,b,strlen(b));
 	printf("je vais afficher ce que vaut a\n");
@@ -105,7 +111,7 @@ char* divise(arg* arg,int nb){
 char* concat(arg* argu,int nb){
   argu=NULL;
   nb=0;
-	//TODO verifier que le nombre d'argument et leurs type est bon	
+	//TODO verifier que le nombre d'ARGUMENTS et leurs type est bon	
 	return NULL;
 }
 
