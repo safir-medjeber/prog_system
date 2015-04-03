@@ -91,7 +91,7 @@ int testReturnValue(char * buffer){
     printf("Signal envoyé par la fonction : FONCTION_INCONNUE\n");
     return 1;
   case MAUVAIS_ARGUMENTS:
-    printf("Signal envoyé par la fonction : MAUVAIS_ARGUMENTS\n");
+    printf("Signal envoyé par la fonction : MAUVAISE_ARGUMENTS\n");
     return 2;
   case PAS_DE_REPONSE:
     printf("Signal envoyé par la fonction : PAS DE REPONSE\n");  
@@ -118,7 +118,6 @@ int receiveData(){
   return val;
 }
 
-<<<<<<< HEAD
 
 
 
@@ -127,69 +126,15 @@ int main(int argc,char *argv[]) {
   parseArg(argc, argv);
   /*
   int var= 245;
-=======
-// /!\ PENSER A REVOIR CETTE FONCTION POUR LE CAS DES STRING EN ARGUMENT
-int parsing(int argc, char *argv[]){
-  int i=0 , j=0, k=0, nbrArg[512];
-  char *nameFunc, *tmpArg;
-  
-  if(argc==1)        // Si aucun nom de fonction
-    printf("Pas de fonction a appeler\n");
-  else {             // Si on donne un nom de fonction
-    nameFunc = argv[1]; //On prend le nom de la fonction
-    if(argc==2){        //Si la fonction ne prend pas d'arguments   
-      arg a[1];
-      a[0].type = 0;
-      a[0].arg = NULL;
-      runClient(nameFunc, 0, a);
-    }
-    else { //Si la fonction a des arguments
-      arg a[argc-2];
-      for(i=2;i<argc;i++){
-	tmpArg = argv[i];
-	if(tmpArg[0]>='0' || tmpArg[0]<='9'){ // Si l'argument est un nombre
-	  nbrArg[k] = atoi(tmpArg);
-	  a[j].type = 1;
-	  a[j].arg = &nbrArg[k];
-	  k++;
-	  j++;
-	}
-	else 
-	  if ((tmpArg[0]>='A' && tmpArg[0]<='Z') || 
-	      (tmpArg[0]>='a' && tmpArg[0]<='z')){ // Si l'argument est un string
-	    //Pas encore testé car on a pas encore de fonctions sur les strings
-	    a[j].type = 2;
-	    a[j].arg = &tmpArg;
-	    j++;
-	  }
-      }
-      runClient(nameFunc, argc-2, a);   
-    }
-  }	
-  return 0;
-}
-
-int main(int argc,char *argv[]) {
-  
-	parsing(argc, argv);
-  
-	/* int var= 245;
->>>>>>> ce4a3d058f1d74cc794b7ee6b0b4d8af2cd7cc9d
   int var2 = 2; 
-  char* var3= "coucou";
+  int var3= 300;
   arg a[3];
   a[0].type=1;
   a[0].arg=&var2;
   a[1].type=1;
   a[1].arg=&var;
-<<<<<<< HEAD
   a[2].type=1;
   a[2].arg=&var3;
   runClient("merde", 2, a );  */
   return 0;
-=======
-  a[2].type=2;
-  a[2].arg=var3;
-  runClient("plus", 3, a );  */
->>>>>>> ce4a3d058f1d74cc794b7ee6b0b4d8af2cd7cc9d
 }
