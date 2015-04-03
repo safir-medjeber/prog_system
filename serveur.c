@@ -8,6 +8,7 @@
 #include <sys/socket.h>
 #include <signal.h>
 
+#include "serveur.h"
 #include "errno.h"
 #include "printMsg.h"
 #include "serialize.h"
@@ -25,6 +26,16 @@ void timeOut () {
   exit(0);
 }
 
+void runAlarm(int time){
+  struct sigaction act ;
+  sigemptyset (& act.sa_mask ) ;
+  act.sa_flags = SA_SIGINFO ;
+  act.sa_sigaction = timeOut ;
+  if(sigaction(SIGALRM, &act, NULL) == (int)SIG_ERR) {
+    perror ("sigaction");
+  }
+  alarm(time);
+}
 
 // Gestionnaire de connection pour un client
 int connection_handler(int sock){
@@ -37,13 +48,9 @@ int connection_handler(int sock){
   c=0;
   
   while ((lus=read(sock,buffer,256))>0) {
-    if (signal( SIGALRM , timeOut) == SIG_ERR )
-      perror( " cant catch SIGALRM " ) ;
-     alarm(2);
-     printf("alarme lancee\n");
-   
-    
-	 printf("%d",*buffer);
+
+
+    runAlarm(2);
     printf("je lis: \n");
     printMsg(buffer);
       nomFonction=deserialize(buffer,&c,2);

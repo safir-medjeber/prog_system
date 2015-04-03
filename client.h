@@ -12,4 +12,7 @@ int testReturnValue(char * buffer);
 int appel_externe(const char *fonction, unsigned short argc,  arg* argv);
 int sendData(char *send);
 int receiveData();
+
+
+
 #endif

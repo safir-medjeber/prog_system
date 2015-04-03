@@ -20,7 +20,7 @@ client: $(FORCLIENT)
 	$(CC) -o $@ $^ $(CFLAGS)
 
 
-server.o : printMsg.h serialize.h serverFunctions.h deserialize.h
+server.o : serveur.h printMsg.h serialize.h serverFunctions.h deserialize.h
 serveur: $(FORSERVER)
 	$(CC) -o $@ $^ $(CFLAGS)
 
