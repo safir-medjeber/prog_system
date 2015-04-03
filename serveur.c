@@ -14,7 +14,7 @@
 #include "deserialize.h"
 #include "serverFunctions.h"
 
-#define SOQUETTE "/tmp/.SOQUETTE"
+#define SOQUETTE "/tmp/.soquette"
 int mySocket;
 
 void timeOut () {
