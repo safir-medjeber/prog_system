@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS = -Wall -Wextra
 
-FORCLIENT= client.o serialize.o printMsg.o
+FORCLIENT= client.o serialize.o parsing.o printMsg.o
 FORSERVER= serveur.o  printMsg.o serialize.o serverFunctions.o deserialize.o
 
 
@@ -14,7 +14,7 @@ all: $(TARGETS)
 %.o: %.c
 	$(CC) -c -o $@ $< $(CFLAGS)
 
-client.o : serialize.h client.h printMsg.h 
+client.o : serialize.h parsing.h client.h printMsg.h 
 
 client: $(FORCLIENT)
 	$(CC) -o $@ $^ $(CFLAGS)
