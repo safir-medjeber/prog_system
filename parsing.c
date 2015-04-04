@@ -38,7 +38,7 @@ int parseArg(int argc, char *argv[]){
   int i=0 , j=0, k=0, size, nbrArg[512];
   char *name, *tmpArg; 
   
-  if(argc==1){//Si aucun nom de fonction
+  if(argc==1){ //Si aucun nom de fonction
     printf("Pas de fonction a appeler\n");
     return 0;
   }
@@ -48,6 +48,7 @@ int parseArg(int argc, char *argv[]){
     if(size==1){  //Si la fonction ne prend pas d'arguments   
       a[0].type = 0;
       a[0].arg = NULL;
+      size = 0;
     }
     else {  //Si la fonction a des arguments
       for(i=2;i<argc;i++){
@@ -65,9 +66,9 @@ int parseArg(int argc, char *argv[]){
 	  j++;
 	}
       }
-      name = nameFunc(argc, argv);
-      runClient(name, size, a);
     }
+    name = nameFunc(argc, argv);
+    runClient(name, size, a);
   } 
   return 0;
 }
