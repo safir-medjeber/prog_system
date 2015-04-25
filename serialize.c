@@ -17,7 +17,7 @@ char * prepareMsgBeforeSend(char* fonction, char* argc, char* structArg){
 
 
 
-char * serializeInt(int entier){
+char * serializeInt(int entier,int type){
   int i, lng;
   char buff1[512];
   char buff2[512]; 
@@ -27,7 +27,7 @@ char * serializeInt(int entier){
   lng=strlen(buff1);
   serial=malloc(sizeof(char)*(lng+3));
   memset(serial,0,lng+3);
-  buff2[0]=0x01;
+  buff2[0]=type;
   buff2[1]=lng;
  
   for(i=0; i<lng; i++){
@@ -64,9 +64,9 @@ char * serializeArg(arg argv){
   if(type==0){// void
     champ = "";
   }
-  if(type==1){// si pointeur sur int
+  if(type==1 || type==3){// si pointeur sur int
     convertInt = *((int *) argv.arg);
-    champ = serializeInt(convertInt);
+    champ = serializeInt(convertInt,type);
   }
   if(type==2){// si pointeur sur char
     champ = serializeString(((char *) argv.arg));

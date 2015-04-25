@@ -13,7 +13,7 @@ typedef struct {
   void *arg;
 } arg;
 
-char *serializeInt(int entier);
+char *serializeInt(int entier,int type);
 char *serializeString(const char* s);
 char *serializeArg(arg v);
 char *serializeTabArg(unsigned short argc, arg* v);

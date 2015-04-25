@@ -104,12 +104,19 @@ char* apply_function(int fonc,arg* argu,int nbArg){
 	}
 }
 arg* getArg(char* buffer,int nbArg,int c,int sock){
-	int i,j,taille;
+	int i,j,taille,estNegatif;
 	char* nbArgTmp;
+	estNegatif=1;
 	arg* tabArg=malloc(nbArg*sizeof(arg));
 	for(i=0;i <nbArg;i++){
-		if(buffer[++c]==1){//l'argument est un entier
-			tabArg[i].type=1;
+		if(buffer[++c]==1 || buffer[c]==3){//l'argument est un entier
+			tabArg[i].type=buffer[c];
+			if(buffer[c]==3){
+				estNegatif=-1;
+			}
+			else{
+				estNegatif=1;
+			}
 			taille=buffer[++c];
 			nbArgTmp=malloc(taille*(sizeof(char))+1);
 			for(j=0;j<taille;j++){
@@ -118,7 +125,7 @@ arg* getArg(char* buffer,int nbArg,int c,int sock){
 			}
 			nbArgTmp[j]='\0';
 			printf("argument est %d et sa taille est %d  et son string %s\n",atoi(nbArgTmp),taille,nbArgTmp);
-			tabArg[i].arg=setArg(atoi(nbArgTmp));
+			tabArg[i].arg=setArg(atoi(nbArgTmp)*estNegatif);
 			free(nbArgTmp);
 		}
 		else if (buffer[c]==2){//l'argument est un char*

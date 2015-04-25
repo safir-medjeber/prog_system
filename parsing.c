@@ -5,19 +5,29 @@
 #include <arpa/inet.h>
 #include <sys/un.h>
 #include <sys/socket.h>
+#include <ctype.h>
 #include "serialize.h"
 #include "client.h"
 
 int isInt(char* testing){
-  int i, size, cond=1;
-  size = strlen(testing);
-  for(i=0; i<size; i++){
-    if(testing[i]<='0' || testing[i]>='9'){
+  if(*testing=='-'){// le nombre est negatif
+	  testing++;
+  }
+  
+  /*for(; i<size; i++){
+    if(isdigit(testing[i])){
       cond = 0;
       return cond;
     }
-  }
-  return cond;
+  }*/
+  while (*testing)
+     {
+        if (!isdigit(*testing))
+           return 0;
+        else
+           ++testing;
+     }
+  return 1;
 }
 
 char* nameFunc(int argc, char* argv[]){
@@ -54,13 +64,22 @@ int parseArg(int argc, char *argv[]){
       for(i=2;i<argc;i++){
 	tmpArg = argv[i];
 	if(isInt(tmpArg)){ //Si l'argument est un nombre
+	printf("largument %d est un entier\n",i-1);
 	  nbrArg[k] = atoi(tmpArg);
-	  a[j].type = 1;
+	  if(nbrArg[k]< 0){
+	  	printf("largument %d est un entier negatif %d \n",i-1,nbrArg[k] * (-1));
+		  nbrArg[k]=nbrArg[k] * (-1);
+		  a[j].type = 3;
+	  }
+	  else
+	  	a[j].type = 1;
 	  a[j].arg = &nbrArg[k];
 	  k++;
 	  j++;
 	}
 	else { //Si l'argument est un string
+	printf("largument %d nest pas un entier\n",i-1);
+
 	  a[j].type = 2;
 	  a[j].arg = tmpArg;
 	  j++;

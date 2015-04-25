@@ -16,8 +16,10 @@ char* plus(arg* arg,int nb){
 	char* a;
 	int res = 0;
 	for(i=0; i < nb;i++){
-		if(arg[i].type!=1){
+		if(arg[i].type!=1 && arg[i].type!=3){
 			a = malloc(sizeof(char));
+			printf("le type d'arg est:%d",arg[i].type);
+			perror("plus");
 			*a = MAUVAIS_ARGUMENTS;
 			return a;
 		}
@@ -25,7 +27,8 @@ char* plus(arg* arg,int nb){
 			res+=*((int*)(arg[i].arg));
 		}
 	}
-	char*b = serializeInt(res);
+		char*b = serializeInt(res,res >=0? 1 : 3);
+
 	a = malloc((strlen(b)+1)*sizeof(char));// 
 	a[0]=APPEL_OK;
 	memcpy(a+1,b,strlen(b));
@@ -40,16 +43,21 @@ char* moins(arg* arg,int nb){
 	int res = 0;
 	char* a;
 	for(i=0; i < nb;i++){
-		if(arg[i].type!=1){
+		if(arg[i].type!=1 && arg[i].type!=3){
 			a = malloc(sizeof(char));
 			*a = MAUVAIS_ARGUMENTS;
 			return a;
 		}
 		else{
-			res-=*((int*)(arg[i].arg));
+			if(i==0){
+				res=*((int*)(arg[i].arg));
+		}
+			else
+				res=res-*((int*)(arg[i].arg));
 		}
 	}
-	char*b = serializeInt(res);
+		char*b = serializeInt(res,res >=0? 1 : 3);
+
 	a = malloc((strlen(b)+1)*sizeof(char));// 
 	a[0]=APPEL_OK;
 	memcpy(a+1,b,strlen(b));
@@ -64,7 +72,7 @@ char* multiplie(arg* arg,int nb){
 	int res = 1;
 	char* a;
 	for(i=0; i < nb;i++){
-		if(arg[i].type!=1){
+		if(arg[i].type!=1 && arg[i].type!=3){
 			a = malloc(sizeof(char));
 			*a = MAUVAIS_ARGUMENTS;
 			return a;
@@ -73,7 +81,8 @@ char* multiplie(arg* arg,int nb){
 			res=res* *((int*)(arg[i].arg));
 		}
 	}
-	char*b = serializeInt(res);
+		char*b = serializeInt(res,res >=0? 1 : 3);
+
 	a = malloc((strlen(b)+1)*sizeof(char));// 
 	a[0]=APPEL_OK;
 	memcpy(a+1,b,strlen(b));
@@ -89,16 +98,20 @@ char* divise(arg* arg,int nb){
 	int res = 1;
 	char* a;
 	for(i=0; i < nb;i++){
-		if(arg[i].type!=1){
+		if(arg[i].type!=1 && arg[i].type!=3){
 			a = malloc(sizeof(char));
 			*a = MAUVAIS_ARGUMENTS;
 			return a;
 		}
 		else{
-			res/=*((int*)(arg[i].arg));
+			if(i==0){
+				res=*((int*)(arg[i].arg));
+		}
+			else
+				res/= *((int*)(arg[i].arg));
 		}
 	}
-	char*b = serializeInt(res);
+	char*b = serializeInt(res,res >=0? 1 : 3);
 	a = malloc((strlen(b)+1)*sizeof(char));// 
 	a[0]=APPEL_OK;
 	memcpy(a+1,b,strlen(b));

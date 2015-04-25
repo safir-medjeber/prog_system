@@ -56,7 +56,7 @@ int runClient(char *fonction, int argc, arg *argv){
 
 int appel_externe(const char *fonction, unsigned short argc, arg * argv){
   char* a = serializeString(fonction);
-  char* b= serializeInt(argc);
+  char* b= serializeInt(argc,1);
   char* c =  serializeTabArg(argc, argv);
   char* send= prepareMsgBeforeSend(a ,b , c);
   int val;
