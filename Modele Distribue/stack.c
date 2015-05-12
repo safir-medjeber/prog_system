@@ -35,7 +35,7 @@ int popStack (STACK *s)
     else
     {
         num = s->stk[s->top];
-        printf ("poped element is = %d\n", s->stk[s->top]);
+       // printf ("poped element is = %d\n", s->stk[s->top]);
         s->top = s->top - 1;
     }
     return(num);
@@ -58,5 +58,11 @@ void display (STACK *s)
         }
     }
     printf ("\n");
+}
+
+void clearStack(STACK *s){
+	while (s->top > -1){
+		popStack(s);
+	}
 }
 

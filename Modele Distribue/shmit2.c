@@ -13,6 +13,7 @@
 #include "stack.h"
 #define flag IPC_CREAT | S_IRUSR | S_IWUSR| IPC_EXCL 
 #define BUFFER_SIZE 256
+#define NBCLIENTSERV 4
 //structure que l'on va utiliser pour stoquer les infomations d'un client serveur en particulier le pid la socket et les fonctions
 // on se limite a 5 fonctions limités a 20 caractere(vous pouvez autorisez plus de 20 carac si vous voulez) car c'est plus facile de gerer la mémoire partagé quand on connait sa taille maximale
 typedef struct info{
@@ -93,31 +94,85 @@ int calcul(char* op,int a, int b){
 
 // cette fonction sert a verifier si le calcule qu'on demande a faire a notre client est realisable par le client en question
 // cette fonction n'est pas implementée pour le moment et renvoie toujours vrai
-int fonctionLocale(char* operateur){
-	return 1;
+char* operateurToString(char op){
+	switch(op){
+		case '+' :
+		return "plus";
+		break;
+		
+		case '-' :
+		return "moins";
+		break;
+		
+		case '*' :
+		return "multiplier";
+		break;
+		
+		case '/' :
+		return "diviser";
+		break;
+		
+		default:
+		return NULL;	
+	}
+}
+int fonctionLocale(char operateur,int pos,info* p){
+	p+=pos;
+	int i;
+	char* comparaison= operateurToString(operateur);
+	if (comparaison==NULL)
+		return -1;
+	for(i=0;i<5;i++ ){
+		if((strcmp(p->fonctions[i],comparaison)==0))
+			return 1;
+	}
+	return 0;
+}
+
+int chercheServeur(char operateur,info* p){
+	int i,j;
+	char* comparaison= operateurToString(operateur);
+	if (comparaison==NULL)
+		return -1;
+	for( i =0;i < NBCLIENTSERV;i++ ){
+		for(int j=0; j < 5; j++){
+			if((strcmp(p->fonctions[j],comparaison)==0))
+				return i;
+		}
+		p++;
+	}
+	return -1;
 }
 
 int main(int argc,char** argv)
 {
 	char fonctions[20][5];// on stockera ici les fonctions que le programme saura faire
     int shmid;// identifiant du segment de mémoire partagé
-    key_t key;// cle du segment partage
+	int shmid2;//identifiant du segment mémoire de l'entier qui stockera notre position dans le tableau de structure
+    key_t key,key2;// cle du segment partage
 	pid_t pid;
     info *shm, *s;
+	int * position;
+	int i;//pour les boucles for
+	int premier; // est a 0 si l'on programme que l'on execute est celui qui a crée le segment mémoire, est sctrictement positif sinon
+	int maPosition;// position du serveur dans le tableau de structure
     struct sockaddr_un addr;
     int sock,client_sock;
-	if(argc< 3 ){// l'argument 1 correspond a la fonction que pourra efectuer ce serveur et le second au nom de la soquette pour le joindre
-	// par ex ./a.out plus soquette fera que le programme saura faire la fonction plus et que la soquette pour le joindre se nomme soquette
+	if(argc< 3 || argc > 7 ){// l'argument premier correspond au nom de la soquette pour le joindre et les restants aux la fonctions que pourra efectuer ce serveur 
+	// par ex ./a.out soquette plus fera que le programme saura faire la fonction plus et que la soquette pour le joindre se nomme soquette
 		exit(EXIT_FAILURE);
 	}
 
 
    key=5678;
+   key2=8765;
     /*
-     * Creation du segment mémoire
+     * Creation du segment mémoire pour les fonctions partagées
      */
-    if ((shmid = shmget(key,sizeof(info)*2,flag)) < 0) {//on crée un nouveau segment mémoire
-		if(errno==EEXIST){if((shmid = shmget(key, 0, 0)) < 0){// si le segment memoire existe déja on s"y connecte 
+    if ((shmid = shmget(key,sizeof(info)*NBCLIENTSERV,flag)) < 0) {//on crée un nouveau segment mémoire
+		if(errno==EEXIST){
+			premier=0;// car on n'est pas celui qui a crée le segment mémoire
+			if((shmid = shmget(key, 0, 0)) < 0){// si le segment memoire existe déja on s"y connecte 
 				perror("shmget exist");
 				        exit(1);
 			}
@@ -128,13 +183,25 @@ int main(int argc,char** argv)
 			        exit(1);
 		}
     }
+	else{// dans ce cas on est celui qui a cree le segment memoire donc on met premier a 1 pour le savoir
+		premier =1;
+	}
    /*
-    * Notez que si le segment memoire existe deja et qu'on si connecte je n'ai pas trouve de moyen de savoir quel Nieme processus on est
-	* par exemple il pourrait tres bien y avoir 3 client connecte ou un seul, c'est important de savoir cela car cela permet de connaitre sa place dans le 
-	* tableau de structure info qu'est notre memoire partage
-	* peut etre faut-il fait un broadcast comme en projet de PR6 chaque personne qui se connecte dit HLO a tout le monde et ces derniers repondent?
+    * Creation du segment mémoire pour la position du serveur dans le tableau
     */
-
+    if ((shmid2 = shmget(key2,sizeof(int),flag)) < 0) {//on crée un nouveau segment mémoire
+		if(errno==EEXIST){if((shmid2 = shmget(key2, 0, 0)) < 0){// si le segment memoire existe déja on s"y connecte 
+				perror("shmget exist");
+				        exit(1);
+			}
+		}
+		else{// erreur shmget a echoue
+			printf("errno is %i",errno);
+			perror("shmget");
+			        exit(1);
+		}
+    }
+  
     /*
      * on attache le segment a notre espace mémoire
      */
@@ -142,15 +209,32 @@ int main(int argc,char** argv)
         perror("shmat");
         exit(1);
     }
+	
+    if ((position = (int*)shmat(shmid2, NULL, 0)) == (int*)-1) {
+        perror("shmat");
+        exit(1);
+    }
+ 	if(premier !=0){
+ 		*position=0;
+		maPosition=0;
+ 	}
+	else{
+		printf("old position est %d\n",*position);
+		*position=*position+1;
+		maPosition=*position;
+	}
+   
 
     /*
-     * on mets les info que l'on souhaite sur les structures
+     * on mets les info (nom de socket,pid,fonctions) sur les structures
      */
     s = shm;
-
+	s+=maPosition;
     s->pid=getpid();
 	strcpy(s->soquette,argv[1]);
-	strcpy(s->fonctions[0],argv[2]);
+	for(i=2; i < argc;i++){
+		strcpy(s->fonctions[i-2],argv[i]);
+	}
 	
 	/*  ca commence a forker ici on enclenche le client/serveur
 	*
@@ -175,7 +259,7 @@ int main(int argc,char** argv)
 	      pid=fork();
 	      if(pid==0){
 			  //ici gerer la requete du client pas encore implemente pour le moment
-			  write(client_sock,"rep",3);
+			 // write(client_sock,"rep",3);
 	       	exit(EXIT_SUCCESS);
 	      }
 
@@ -185,7 +269,8 @@ int main(int argc,char** argv)
 		char* requete;
 		char buff[BUFFER_SIZE];
 		pid_t p;
-		int mySock;
+		int mySock,serveurAppele;
+		printf("voici mes infos je suis le prog N° %d mon pid est %d et ma fonc est %s\n",maPosition,(shm+(*position))->pid,(shm+(*position))->fonctions[0]);
 		while(1){
 			printf("je suis le papa j'attends les requetes\n");
 			requete=fgets(buff,BUFFER_SIZE-1,stdin);// calcul demander par le client tout doit etre separe par un espace par ex ( 20 + 30 ) / ( 3 + 2 ) * 4
@@ -205,13 +290,22 @@ int main(int argc,char** argv)
 				token=strtok(polonaise,e);
 				while(token !=NULL){// on parse l'expression en forme polonaise cela nous donnera a chaque iteration un nombre ou un operateur
 					if(*token =='+' || *token=='-' || *token =='/' || *token=='*'){
-						if(fonctionLocale(token)){// la fonction peut etre calcule par le serveur
+						if(fonctionLocale(token[0],maPosition,shm)){// la fonction peut etre calcule par le serveur
 							printf("je sais calculer ceci\n");
 							pushStack(&s,calcul(token,popStack(&s),popStack(&s)));
 						}
 						else{// le serveur a besoin de demander le resultat a un autre serveur
 							printf("je ne sais pas calculer ceci\n");
-							// todo demander le calcul au bon serveur
+							if((serveurAppele=chercheServeur(token[0],shm)) < 0){
+								printf("ni moi ni mes amis client/serveur ne savont faire cette operation compliquée");
+								clearStack(&s);
+								break;
+							}
+							//pushStack(&s,calculServeurDistant(serveurAppele,token[0],popStack(&s),popStack(&s)));
+							printf("je ne sais pas faire ca demande au servuer N %d",serveurAppele);
+							
+							//clearStack(&s);
+							break;
 						}
 					}
 					else{

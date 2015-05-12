@@ -16,5 +16,6 @@ typedef struct stack STACK;
 void pushStack(STACK *s,int a);
 int  popStack(STACK *s);
 void display(STACK *s);
+void clearStack(STACK *s);
  
 #endif
