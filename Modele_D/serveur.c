@@ -73,7 +73,7 @@ int connection_handler(int sock){
       free(nomFonction);
       free(res);
       free(tabArg);
-      break;		
+      break;	// mais qu'est ce que ce break fout la ?	
     close(sock);
     printf("socket fermee\n");
   }
@@ -84,23 +84,23 @@ int connection_handler(int sock){
 
 
 
-void init_socaddr(struct sockaddr_un* addr){
+void init_socaddr(struct sockaddr_un* addr,char* sock){
   memset(addr,'0', sizeof(*addr));
   addr->sun_family = AF_UNIX;
 
-  if(unlink(SOQUETTE)<0 && errno!=ENOENT){
+  if(unlink(sock)<0 && errno!=ENOENT){
     perror("unlink error dude");
     exit(-1);
   } 
-  strncpy(addr->sun_path, SOQUETTE,sizeof(addr->sun_path)-1 );
+  strncpy(addr->sun_path, sock,sizeof(addr->sun_path)-1 );
 }
 
 
 
-int createServerSocket(){
+int createServerSocket(char* soquette){
   struct sockaddr_un addr;
   int sock;
-  init_socaddr(&addr);
+  init_socaddr(&addr,soquette);
   sock = socket(AF_UNIX, SOCK_STREAM, 0);
   if(sock == -1){
     perror("Serveur socket");
@@ -116,7 +116,7 @@ int createServerSocket(){
   }
   return sock;
 }
-
+/*
 int runServer(){
  struct sockaddr_un addr;
   int sock,client_sock, pid;
@@ -144,7 +144,7 @@ int runServer(){
   perror("boucle" );
   return 0;
 }
-/*
+
 int main() {
   runServer();
 }

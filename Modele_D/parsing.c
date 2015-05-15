@@ -44,13 +44,13 @@ int numberArg(int argc){
     return argc-2;
 }
 
-int runClientAfterParse(int argc, char *argv[]){
+int* runClientAfterParse(int argc, char *argv[],char* soquette){
   int i=0 , j=0, k=0, size, nbrArg[512];
   char *name, *tmpArg; 
   
   if(argc==1){ //Si aucun nom de fonction
     printf("Pas de fonction a appeler\n");
-    return 0;
+    return NULL;
   }
   else {  //Si on donne un nom de fonction
     size = numberArg(argc);
@@ -87,7 +87,7 @@ int runClientAfterParse(int argc, char *argv[]){
       }
     }
     name = nameFunc(argc, argv);
-    runClient(name, size, a);
+   return runClient(name, size, a,soquette);
   } 
-  return 0;
+  return NULL;
 }

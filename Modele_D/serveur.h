@@ -2,7 +2,7 @@
 
 #define SERVEUR_H_INCLUDED
 
-int createServerSocket();
+int createServerSocket(char * sock);
 int connection_handler(int sock);
 
 void timeOut();

@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS = -Wall -Wextra
 
-FORCLIENT= clientServer.o client.o serialize.o parsing.o printMsg.o serveur.o  serverFunctions.o deserialize.o
+FORCLIENT= clientServer.o client.o serialize.o parsing.o printMsg.o serveur.o  serverFunctions.o deserialize.o Polonaise.o stack.o
 
 
 TARGETS=  clientServer

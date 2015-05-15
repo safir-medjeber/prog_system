@@ -13,19 +13,19 @@
 
 
 int mySocket;
-
-void init_socaddr_client(struct sockaddr_un* addr){
+int* resultat;
+void init_socaddr_client(struct sockaddr_un* addr,char* soquette){
   memset(addr,0, sizeof(*addr));
   addr->sun_family = AF_UNIX;
-  strncpy(addr->sun_path, "/tmp/.soquette", sizeof(addr->sun_path)-1);
+  strncpy(addr->sun_path, soquette, sizeof(addr->sun_path)-1);
 }
 
 
-int createSocket(){
+int createSocket(char* soquette){
   struct sockaddr_un addr;
   int sock;
   sock = socket(AF_UNIX, SOCK_STREAM, 0);
-  init_socaddr_client(&addr);
+  init_socaddr_client(&addr,soquette);
   if(sock == -1){
     perror("Erreur create client");
     return -1;
@@ -40,16 +40,17 @@ int createSocket(){
 }
 
 
-int runClient(char *fonction, int argc, arg *argv){
-  mySocket = createSocket();
+int* runClient(char *fonction, int argc, arg *argv,char* soquette){
+  mySocket = createSocket(soquette);
   if(mySocket==-1) {
     perror("socket problem\n");
     exit(EXIT_FAILURE);
   }
 
-  appel_externe(fonction , argc, argv);
+  if((appel_externe(fonction , argc, argv)) != 0)
+	  return NULL;
  
-  return 0;
+  return resultat;
 }
 
 
@@ -103,6 +104,32 @@ int testReturnValue(char * buffer){
   }
 }
 
+int* getInt(char* buffer){
+	int j,taille,estNegatif;
+	int c = 0;
+	estNegatif=1;
+	char* nbArgTmp;
+	int* resultat = malloc(sizeof(int)); 
+	if(buffer[c]==1 || buffer[c]==3){//l'argument est un entier
+		if(buffer[c]==3){
+			estNegatif=-1;
+		}
+		else{
+			estNegatif=1;
+		}
+		taille=buffer[++c];
+		nbArgTmp=malloc(taille*(sizeof(char))+1);
+		for(j=0;j<taille;j++){
+			nbArgTmp[j]=buffer[++c];
+		}
+		nbArgTmp[j]='\0';
+		*resultat=atoi(nbArgTmp)*estNegatif;
+		free(nbArgTmp);
+		return resultat;
+	}
+	else return NULL;
+}
+
 int receiveData(){
   char buffer[256];
   int val;
@@ -113,8 +140,9 @@ int receiveData(){
   val=testReturnValue(buffer);
 
   if(val==0)
-    printReceiveMsg(buffer+1);
-  
+    {printReceiveMsg(buffer+1);
+  	resultat=getInt(buffer+1);
+	}
   return val;
 }
 
