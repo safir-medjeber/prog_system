@@ -13,6 +13,7 @@ char* boucle(){
 
 char* plus(arg* arg,int nb){
 	int i;
+	int type=1;
 	char* a;
 	int res = 0;
 	for(i=0; i < nb;i++){
@@ -27,7 +28,12 @@ char* plus(arg* arg,int nb){
 			res+=*((int*)(arg[i].arg));
 		}
 	}
-		char*b = serializeInt(res,res >=0? 1 : 3);
+	if(res < 0){
+		type=3;
+		res=res*-1;
+	}
+
+		char*b = serializeInt(res,type);
 
 	a = malloc((strlen(b)+1)*sizeof(char));// 
 	a[0]=APPEL_OK;
@@ -42,6 +48,7 @@ char* moins(arg* arg,int nb){
 	int i;
 	int res = 0;
 	char* a;
+	int type =1;
 	for(i=0; i < nb;i++){
 		if(arg[i].type!=1 && arg[i].type!=3){
 			a = malloc(sizeof(char));
@@ -56,7 +63,11 @@ char* moins(arg* arg,int nb){
 				res=res-*((int*)(arg[i].arg));
 		}
 	}
-		char*b = serializeInt(res,res >=0? 1 : 3);
+	if(res < 0){
+		type=3;
+		res=res*-1;
+	}
+		char*b = serializeInt(res,type);
 
 	a = malloc((strlen(b)+1)*sizeof(char));// 
 	a[0]=APPEL_OK;
@@ -71,6 +82,7 @@ char* multiplie(arg* arg,int nb){
 	int i;
 	int res = 1;
 	char* a;
+	int type =1;
 	for(i=0; i < nb;i++){
 		if(arg[i].type!=1 && arg[i].type!=3){
 			a = malloc(sizeof(char));
@@ -81,7 +93,11 @@ char* multiplie(arg* arg,int nb){
 			res=res* *((int*)(arg[i].arg));
 		}
 	}
-		char*b = serializeInt(res,res >=0? 1 : 3);
+	if(res < 0){
+		type=3;
+		res=res*-1;
+	}
+		char*b = serializeInt(res,type);
 
 	a = malloc((strlen(b)+1)*sizeof(char));// 
 	a[0]=APPEL_OK;
@@ -97,6 +113,7 @@ char* divise(arg* arg,int nb){
 	int i;
 	int res = 1;
 	char* a;
+	int type =1;
 	for(i=0; i < nb;i++){
 		if(arg[i].type!=1 && arg[i].type!=3){
 			a = malloc(sizeof(char));
@@ -111,7 +128,11 @@ char* divise(arg* arg,int nb){
 				res/= *((int*)(arg[i].arg));
 		}
 	}
-	char*b = serializeInt(res,res >=0? 1 : 3);
+	if(res < 0){
+		type=3;
+		res=res*-1;
+	}
+	char*b = serializeInt(res,type);
 	a = malloc((strlen(b)+1)*sizeof(char));// 
 	a[0]=APPEL_OK;
 	memcpy(a+1,b,strlen(b));

@@ -139,7 +139,7 @@ char* toStringRequete(char op,int a,int b){
 	sprintf(buf," %d %d",b,a);
 	strcpy(total,nomFonction);
 	strcat(total,buf);
-	//printf("LOOOK %s\n",total);
+//	printf("LOOOK %s\n",total);
 	return total;
 }
 
@@ -224,15 +224,15 @@ int launchClient(int maPosition,int* position,info* shm){
 			while(token !=NULL){// on parse l'expression en forme polonaise cela nous donnera a chaque iteration un nombre ou un operateur
 				if((isdigit(*token)) || ( *token=='-' && isdigit(*(token+1)))){// on a tire un nombre
 					pushStack(&s,atoi(token));
-					printf("je push %d\n",atoi(token));
+					//printf("je push %d\n",atoi(token));
 				}
 				else{// on a tire un operateur
 					if(fonctionLocale(token[0],maPosition,shm)){// la fonction peut etre calcule par le serveur
-						printf("je sais calculer ceci\n");
+						//printf("je sais calculer ceci\n");
 						pushStack(&s,calcul(token,popStack(&s),popStack(&s)));
 					}
 					else{// le serveur a besoin de demander le resultat a un autre serveur
-						printf("je ne sais pas calculer ceci\n");
+						//printf("je ne sais pas calculer ceci\n");
 						if((serveurAppele=chercheServeur(token[0],shm)) < 0){
 							printf("ni moi ni mes amis client/serveur ne savont faire cette operation compliquée");
 							clearStack(&s);
@@ -253,7 +253,8 @@ int launchClient(int maPosition,int* position,info* shm){
 				}
 				token=strtok_r(NULL,e,&saveptr);
 			}
-			printf("resultat final %d et polonaise %s\n",popStack(&s),polonaise);			
+			printf("resultat final %d et polonaise %s\n",popStack(&s),polonaise);	
+			clearStack(&s);		
 		}
 	}
 }

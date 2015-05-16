@@ -48,6 +48,9 @@ void  printMsg(char * send){
 
 void  printReceiveMsg(char * ptr){
   int tmp, i;
+  if(*ptr ==3){
+	  printf("negatif");
+  }
   ptr++;
   tmp = *ptr;
   printf("Resultat : ");
