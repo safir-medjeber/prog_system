@@ -1,0 +1,10 @@
+il faut toujours mettre un espace apres avoir mis une parenthese, avoir saisi un operateur binaire ou avoir saisi un nombre,
+ne mettez aucun espace en trop au debut ou à la fin.
+
+verifier bien que votre client serveur sait effectuer les calculs demandés ou qu'un autre client serveur sache faire le calcul.
+
+1 + 3
+( 1 + 3 ) / 2
+( 5 * 10 ) - ( 4 * 9 )
+( ( -5000 / 100 ) * 2 ) + 44 - 1
+
