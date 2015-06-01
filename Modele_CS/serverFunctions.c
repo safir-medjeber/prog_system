@@ -121,10 +121,10 @@ char* divise(arg* arg,int nb){
 	}
 	return a;
 }
-char* concat(arg* argu,int nb){
+/*char* concat(arg* argu,int nb){
   argu=NULL;
   nb=0;
 	//TODO verifier que le nombre d'ARGUMENTS et leurs type est bon	
 	return NULL;
-}
+}*/
 
