@@ -143,6 +143,19 @@ int chercheServeur(char operateur,info* p){
 	}
 	return -1;
 }
+char* toStringRequete(char op,int a,int b){
+	char* nomFonction = operateurToString(op);
+	char buf[256];
+	char* total = (char*)malloc(512);
+	sprintf(buf,"%d %d",a,b);
+	strcpy(total,nomFonction);
+	strcat(total,buf);
+	return total;
+}
+
+int* runClientRequest(char* requete,char* soquette){
+	
+}
 
 int main(int argc,char** argv)
 {
@@ -269,6 +282,7 @@ int main(int argc,char** argv)
 		char* requete;
 		char buff[BUFFER_SIZE];
 		pid_t p;
+		int* resultatServeurDistant;
 		int mySock,serveurAppele;
 		printf("voici mes infos je suis le prog N° %d mon pid est %d et ma fonc est %s\n",maPosition,(shm+(*position))->pid,(shm+(*position))->fonctions[0]);
 		while(1){
@@ -289,7 +303,12 @@ int main(int argc,char** argv)
 				printf("transformation reussi %s debut du calcul\n",polonaise);
 				token=strtok(polonaise,e);
 				while(token !=NULL){// on parse l'expression en forme polonaise cela nous donnera a chaque iteration un nombre ou un operateur
-					if(*token =='+' || *token=='-' || *token =='/' || *token=='*'){
+					
+					if((isdigit(*token)) || ( *token=='-' && isdigit(*(token+1)))){// on a tire un nombre
+						pushStack(&s,atoi(token));
+						printf("je push %d\n",atoi(token));
+					}
+					else{// on a tire un operateur
 						if(fonctionLocale(token[0],maPosition,shm)){// la fonction peut etre calcule par le serveur
 							printf("je sais calculer ceci\n");
 							pushStack(&s,calcul(token,popStack(&s),popStack(&s)));
@@ -302,16 +321,20 @@ int main(int argc,char** argv)
 								break;
 							}
 							//pushStack(&s,calculServeurDistant(serveurAppele,token[0],popStack(&s),popStack(&s)));
-							printf("je ne sais pas faire ca demande au servuer N %d",serveurAppele);
-							
+							printf("je ne sais pas faire ca je vais demander au servuer N %d",serveurAppele);
+							char* requete = toStringRequete(token[0],popStack(&s),popStack(&s));
+					        resultatServeurDistant=runClientRequest(requete,(shm+serveurAppele)->soquette);
+							if(resultatServeurDistant==NULL){// le serveur distant n'a pu executer la requete
+								printf("echec serseur distant");
+								break;
+							}
+							else{// le servuer distant a executé la requete avec succes
+								
+							}
+							free requete;
 							//clearStack(&s);
-							break;
 						}
-					}
-					else{
-						pushStack(&s,atoi(token));
-						printf("je push %d\n",atoi(token));
-					}
+										}
 					token=strtok(NULL,e);
 				}
 				// 

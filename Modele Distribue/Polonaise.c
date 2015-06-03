@@ -4,6 +4,24 @@
 #include<unistd.h>
 #include "Polonaise.h"
 
+/* algo 
+ant qu'il y a des tokens en entrée {
+
+    Examiner le token courant sur le fichier d'entrée
+    Si c'est un opérande, le placer sur le fichier de sortie
+    Si c'est une parenthèse ouvrante, la mettre sur la pile
+    Si c'est un opérateur, alors
+        Si la pile est vide, pousser l'opérateur sur la pile
+        Si le sommet de la pile est une parenthèse ouvrante, pousser l'opérateur sur la pile
+        Si l'opérateur est prioritaire sur celui au sommet de la pile, pousser l'opérateur sur la pile
+        Sinon, enlever l'opérateur de la pile et le mettre sur le fichier de sortie. Replacer ensuite l'opérateur courant sur la pile
+    Si c'est une parenthèse fermante, enlever les opérateurs de la pile et les placer sur le fichier de sortie jusqu'à ce que l'on rencontre la parenthèse ouvrante, que l'on élimine.
+
+}
+
+Enlever tous les opérateurs restants et les placer sur le fichier de sortie. 
+
+*/
 
 char* toPolonaise(char* expr)
 {
@@ -24,7 +42,17 @@ char* toPolonaise(char* expr)
 	    token = strtok(expr, s);
         while(token != NULL)
         {
-            if(token[0]=='+'||token[0]=='-'||token[0]=='*'||token[0]=='/'||token[0]=='^'){
+			if( (isdigit(token[0])) || ( token[0]=='-' && isdigit(token[1])) ){
+                printf("%s ",token);
+				while(*token!='\0'){
+					*rep=*token;
+					token++;
+					rep++;
+				}
+				*rep = ' ';
+				rep++;
+			}
+            else if(token[0]=='+'||token[0]=='-'||token[0]=='*'||token[0]=='/'||token[0]=='^'){
             	if(top==0 || stack[top]=='('){
             		push(token[0],&top,stack);;
             	}
