@@ -10,6 +10,7 @@
 #include <sys/shm.h>
 #include <sys/stat.h>
 #include <errno.h>
+#include <signal.h>
 #include <ctype.h>
 
 #include "serveur.h"
@@ -139,7 +140,7 @@ char* toStringRequete(char op,int a,int b){
 	sprintf(buf," %d %d",b,a);
 	strcpy(total,nomFonction);
 	strcat(total,buf);
-//	printf("LOOOK %s\n",total);
+		printf("LOOOK %s\n",total);
 	return total;
 }
 
@@ -198,23 +199,52 @@ int launchServeur(int sock){
 	return 1;
 }
 
-int launchClient(int maPosition,int* position,info* shm){
+int launchClient(int maPosition,int* position,info* shm,int *nbConnectes,int shmid,int shmid2,int shmid3,pid_t pid){
 	char* requete;
 	char buff[BUFFER_SIZE];
+	int logout = 0;
 	pid_t p;
 	int* resultatServeurDistant;
 	int serveurAppele;
     const char e[2] = " ";		
 	printf("voici mes infos je suis le prog N° %d mon pid est %d et ma fonc est %s\n",maPosition,(shm+(*position))->pid,(shm+(*position))->fonctions[0]);
 	while(1){
-		printf("entrer la calcul que vous souhaitez effectuer\n");
+		printf("entrer le calcul que vous souhaitez effectuer\n");
 		requete=fgets(buff,BUFFER_SIZE-1,stdin);
 		if(requete==NULL)
 			continue;
+		if((strstr(requete,"exit"))!=NULL){
+		    if (shmdt(shm) == -1) {
+		           perror("shmdt");
+		           exit(1);
+		       }
+			*position = maPosition;
+   		    if (shmdt(position) == -1) {
+   		           perror("shmdt");
+   		           exit(1);
+   		       }
+			 *nbConnectes= *nbConnectes-1;
+			 printf("nbconnectes %d",*nbConnectes);
+			 logout= (*nbConnectes <= 0);
+			if (shmdt(nbConnectes) == -1) {
+				perror("shmdt");
+				exit(1);
+			 }
+		   printf("Segment detache\n");
+			 if(logout){
+				 shmctl(shmid, IPC_RMID, NULL);
+				 shmctl(shmid2, IPC_RMID, NULL);
+				 shmctl(shmid3, IPC_RMID, NULL);
+				 printf("memory is free");
+			 }
+			   kill(pid, SIGKILL);
+			   exit(1);
+		}
 		if((p=fork()) < 0){
 			exit(EXIT_FAILURE);
 		}
 		else if(p==0){// le fils va maintenant traiter le calcul demandé
+			
 		    char *token ;
 			char* saveptr;
 			STACK s;// pile d'entier, indispensable pour calculer une expression en forme polonaise
@@ -253,7 +283,7 @@ int launchClient(int maPosition,int* position,info* shm){
 				}
 				token=strtok_r(NULL,e,&saveptr);
 			}
-			printf("resultat final %d et polonaise %s\n",popStack(&s),polonaise);	
+			printf("resultat final %d \n",popStack(&s));	
 			clearStack(&s);		
 		}
 	}
@@ -264,10 +294,12 @@ int main(int argc,char** argv)
 {
     int shmid;// identifiant du segment de mémoire partagé
 	int shmid2;//identifiant du segment mémoire de l'entier qui stockera notre position dans le tableau de structure
-    key_t key,key2;// cle du segment partage
+	int shmid3;//identifiant du compteur de client en ligne
+    key_t key,key2,key3;// cle du segment partage
 	pid_t pid;
     info *shm;// deux pointeurs qui pointerons sur le debut du segment memoire partagée stoquant le tableau de struct info
 	int * position;// pointeur sur le segment de mémoire partagé,contient un entier qui indique quelle est la position dans la tableau du prochain client serveur se connectant
+	int *nbConnectes;
 	int premier; // est a 0 si l'on programme que l'on execute est celui qui a crée le segment mémoire, est sctrictement positif sinon
 	int maPosition;// position du serveur dans le tableau de structure
     struct sockaddr_un addr;
@@ -286,6 +318,7 @@ int main(int argc,char** argv)
     */
     key=5678;
     key2=8765;
+	key3 = 1234;
   
     /*
      * Creation du segment mémoire pour les fonctions partagées
@@ -294,11 +327,11 @@ int main(int argc,char** argv)
 	CreateOrConnectSegment(&shmid,key,&premier);
 	
    /*
-    * Creation du segment mémoire pour la position du serveur dans le tableau
+    * Creation du segment mémoire pour la position du serveur dans le tableau et le nombre de clients connectes
     */
 	
 	CreateOrConnectSegment(&shmid2,key2,NULL);
-
+	CreateOrConnectSegment(&shmid3,key3,NULL);
     /*
      * on attache le segment a notre espace mémoire
      */
@@ -311,12 +344,37 @@ int main(int argc,char** argv)
         perror("shmat");
         exit(1);
     }
+	
+    if ((nbConnectes = (int*)shmat(shmid3, NULL, 0)) == (int*)-1) {
+        perror("shmat");
+        exit(1);
+    }
  	if(premier !=0){
  		*position=0;
 		maPosition=0;
+		*nbConnectes=1;
  	}
+ 	
 	else{
 	//	printf("old position est %d\n",*position);
+		
+		*nbConnectes= *nbConnectes+1;
+		if(*nbConnectes >4){
+		    if (shmdt(shm) == -1) {
+		           perror("shmdt");
+		           exit(1);
+		       }
+   		    if (shmdt(position) == -1) {
+   		           perror("shmdt");
+   		           exit(1);
+   		       }
+      	    if (shmdt(nbConnectes) == -1) {
+      		           perror("shmdt");
+      		           exit(1);
+      		       }
+			   printf("Segment detache car trop de serveur clients sont en ligne\n");
+			   exit(1);
+		}
 		*position=*position+1;
 		maPosition=*position;
 	}
@@ -335,7 +393,7 @@ int main(int argc,char** argv)
 		launchServeur(sock);
 	}
 	else{//pere qui va jouer le role du client
-		launchClient( maPosition,position,shm);
+		launchClient( maPosition,position,shm,nbConnectes,shmid,shmid2,shmid3,pid);
 				
 			}
 		}
