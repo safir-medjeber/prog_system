@@ -1,4 +1,25 @@
-Membres du projet:
-Mets-du-beurre Safir
-Hammouche c'est Lia
-Beddiaf lot'fi.
+Pour compiler à la fois le modele client/serveur et le modele distribué:
+     -> Lancé le makefile se trouvant à la racine du dossier
+
+
+
+Pour tester le modele client/serveur
+     -> se rendre dans le dossier Model_CS
+     -> ./serveur
+     	=> lance un serveur en attente de client
+	=> fonctions disponibles sur le serveur:
+	   -> boucle, plus, moins, multiplie, divise, concat
+Puis
+     -> toujours dans le dossier Model_CS mais dans un nouveau terminal
+     -> ./client plus 2 2
+        => Lance un client qui fait un appel externe à la fonction "plus" avec comme argument 2 et 2
+	=> Voir test_model_CS pour d'autres exemples
+
+
+
+
+Pour tester le modele distribué
+     -> se rendre dans le dossier Model_D
+
+
+
