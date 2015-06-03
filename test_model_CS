@@ -1,0 +1,44 @@
+Après avoir exécuté le serveur:
+      => nous avons lancé plusieurs clients qui font des appels externes differents
+         afin de mettre en évidence tous les types de réponses du serveur.
+	      
+
+Fonctions Disponible sur le serveur:
+      => char* boucle();
+      => char* plus(arg* arg,int nb);
+      => char* moins(arg* arg,int nb);
+      => char* multiplie(arg* arg,int nb);
+      => char* divise(arg* arg,int nb);
+      => char* concat(arg* argu,int nb);
+
+
+Tests:
+
+./client boucle
+Signal envoyé par la fonction : PAS DE REPONSE
+
+
+./client plus 2 3
+Signal envoyé par la fonction : APPEL OK
+Resultat : 5
+
+
+./client  moins 3 -4 5 
+Signal envoyé par la fonction : APPEL OK
+Resultat : 2
+
+
+./client  divise 3 cinq
+Signal envoyé par la fonction : MAUVAISE_ARGUMENTS
+
+
+./client concat salut toi
+Signal envoyé par la fonction : APPEL OK
+Resultat : saluttoi
+
+./client faitDuCafe
+Signal envoyé par la fonction : FONCTION_INCONNUE
+
+
+
+
