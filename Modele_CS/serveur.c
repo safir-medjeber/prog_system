@@ -53,27 +53,27 @@ int connection_handler(int sock){
     runAlarm(2);
     printf("je lis: \n");
     printMsg(buffer);
-      nomFonction=deserialize(buffer,&c,2);
-      printf("la fonction est:%s \n",nomFonction);
-      // on deserialise le nombre d'argument
-      nbArg=getNbArg(buffer,&c);
-      printf("jai %d arguments\n",nbArg);
-      fonction=veriFonction(nomFonction,nbArg,sock);
-      if( fonction < 0){
-		  return -1;
-      }
-      //TODO ici mettre la condition sur le nombre d'arguements que l'on veut
-      arg* tabArg=getArg(buffer,nbArg,c,sock);// tableau ou l'on va stoquer tous les arguments sous forme de struct arg
-      if(tabArg==NULL){
-	return -1;
-      }
-      // tout va bien la serialisation s'est bien deroulee on appelle la fonction demande
-      res=apply_function(fonction,tabArg,nbArg);
-      write(sock,res,strlen(res));
-      free(nomFonction);
-      free(res);
-      free(tabArg);
-      break;		
+    nomFonction=deserialize(buffer,&c,2);
+    printf("la fonction est:%s \n",nomFonction);
+    // on deserialise le nombre d'argument
+    nbArg=getNbArg(buffer,&c);
+    printf("jai %d arguments\n",nbArg);
+    fonction=veriFonction(nomFonction,nbArg,sock);
+    if( fonction < 0){
+      return -1;
+    }
+    //TODO ici mettre la condition sur le nombre d'arguements que l'on veut
+    arg* tabArg=getArg(buffer,nbArg,c,sock);// tableau ou l'on va stoquer tous les arguments sous forme de struct arg
+    if(tabArg==NULL){
+      return -1;
+    }
+    // tout va bien la serialisation s'est bien deroulee on appelle la fonction demande
+    res=apply_function(fonction,tabArg,nbArg);
+    write(sock,res,strlen(res));
+    free(nomFonction);
+    free(res);
+    free(tabArg);
+    break;		
     close(sock);
     printf("socket fermee\n");
   }

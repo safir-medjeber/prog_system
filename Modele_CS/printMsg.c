@@ -11,7 +11,7 @@ int extractInt(char * s){
   for(i=0; i< size; i++)
     tmp[i]=s[i+2];
   value=atoi(tmp);
-  
+  free(tmp);
   return value; 
 }
 
@@ -41,7 +41,7 @@ void  printMsg(char * send){
   printf("\n");
   for(i=0; i< argc ; i++){
     ptr = printVar(ptr);
-      printf("\n");
+    printf("\n");
   } 
 }
 

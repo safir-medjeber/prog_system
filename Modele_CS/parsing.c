@@ -13,13 +13,6 @@ int isInt(char* testing){
   if(*testing=='-'){// le nombre est negatif
 	  testing++;
   }
-  
-  /*for(; i<size; i++){
-    if(isdigit(testing[i])){
-      cond = 0;
-      return cond;
-    }
-  }*/
   while (*testing)
      {
         if (!isdigit(*testing))

@@ -63,10 +63,15 @@ int appel_externe(const char *fonction, unsigned short argc, arg * argv){
   if(sendData(send)==-1){
     close(mySocket);
     return -1;
+
   }
   
   val=receiveData();
   close(mySocket);
+  free(a);
+  free(b);
+  free(c);
+  free(send);
   return val;
 }
 
@@ -114,27 +119,11 @@ int receiveData(){
 
   if(val==0)
     printReceiveMsg(buffer+1);
-  
   return val;
 }
 
 
-
-
 int main(int argc,char *argv[]) {
-  
   runClientAfterParse(argc, argv);
-  /*
-  int var= 245;
-  int var2 = 2; 
-  int var3= 300;
-  arg a[3];
-  a[0].type=1;
-  a[0].arg=&var2;
-  a[1].type=1;
-  a[1].arg=&var;
-  a[2].type=1;
-  a[2].arg=&var3;
-  runClient("merde", 2, a );  */
   return 0;
 }
